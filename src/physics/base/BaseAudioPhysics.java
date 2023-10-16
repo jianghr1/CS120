@@ -3,6 +3,7 @@ package physics.base;
 import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,5 +86,33 @@ public class BaseAudioPhysics {
 
     public void clearRxBuffer() throws InterruptedException {
         this.audioRxBuffer.clear();
+    }
+
+
+    public void playAndRecord(ArrayList<float[]> waves) throws InterruptedException {
+        this.clearRxBuffer();
+        /* play 10s tones and record */
+        for (float[] carrier : waves) {
+            this.put(carrier);
+        }
+        /* start to play & record */
+        this.start();
+        /* wait 10 seconds */
+        Thread.sleep(10*1000);
+        /* stop playing */
+        this.stop();
+    }
+
+    public ArrayList<float[]> tranferRecordToPlay() throws InterruptedException {
+        System.out.println("Transferring recorded waves to Tx buffer");
+        ArrayList<float[]> waves = new ArrayList<>();
+        float[] capturedWave = this.poll();
+        while (capturedWave != null) {
+            waves.add(capturedWave);
+            this.put(capturedWave);
+            capturedWave = this.poll();
+        }
+        System.out.println("Recorded waves have been transferred to Tx buffer.");
+        return waves;
     }
 }
