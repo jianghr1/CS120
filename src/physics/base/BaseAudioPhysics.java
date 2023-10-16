@@ -18,6 +18,7 @@ public class BaseAudioPhysics {
     public BaseAudioPhysics() {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(0));
+        asioDriver.setSampleRate(48000.0);
         this.init();
     }
 
