@@ -1,53 +1,71 @@
 package physics.base;
 
+import java.util.ArrayList;
+
 public class CarrierGenerator {
     private double sampleRate;
-    private int carrierLength;
+    private int bufferLength;
 
-    public CarrierGenerator(double sampleRate, int carrierLength) {
+    public CarrierGenerator(double sampleRate, int bufferLength) {
         this.sampleRate = sampleRate;
-        this.carrierLength = carrierLength;
+        this.bufferLength = bufferLength;
     }
 
     public CarrierGenerator(double sampleRate) {
         this.sampleRate = sampleRate;
-        this.carrierLength = 512;
+        this.bufferLength = 512;
     }
 
     public CarrierGenerator() {
         this.sampleRate = 44100;
-        this.carrierLength = 512;
+        this.bufferLength = 512;
     }
 
     public void setSampleRate(double sampleRate) {
         this.sampleRate = sampleRate;
     }
 
-    public void setCarrierLength(int carrierLength) {
-        this.carrierLength = carrierLength;
+    public void setBufferLength(int bufferLength) {
+        this.bufferLength = bufferLength;
     }
 
-    public float[] genCarrier(int frequency, String carrierType, int carrierLength) {
-        float[] carrier = new float[carrierLength];
+    private float carrierFunc(int baseFrequency, String carrierType, int step) {
+        float x = .0f;
         if (carrierType.compareToIgnoreCase("sin") == 0) {
-            for (int i = 0; i < carrierLength; i++) {
-                carrier[i] = (float) Math.sin(i / this.sampleRate * frequency * 2 * Math.PI);
-            }
+            x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
         } else if (carrierType.compareToIgnoreCase("pulse") == 0) {
-            for (int i = 0; i < carrierLength; i++) {
-                carrier[i] = (Math.sin(i / this.sampleRate * frequency * 2 * Math.PI) >= 0) ? 1.0f : -1.0f;
-            }
+            x = (Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) >= 0) ? 1.0f : -1.0f;
+        } else if (carrierType.compareToIgnoreCase("Proj1-Task2") == 0) {
+            x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) + (float) Math.sin(step / this.sampleRate * 10 * baseFrequency * 2 * Math.PI);
         } else {
             throw new IllegalArgumentException("Unrecognized Carrier Type");
         }
-        return carrier;
+        return x;
+    }
+    public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, int bufferLength, float carrierLength) {
+        ArrayList<float[]> carriers = new ArrayList<float[]> ();
+        int numBuffers = Math.ceilDiv((int)(carrierLength * this.sampleRate), bufferLength);
+        for (int i = 0; i < numBuffers; i++) {
+            carriers.add(new float[bufferLength]);
+        }
+        for (int i = 0; i < numBuffers * bufferLength; i++){
+            carriers.get(i / bufferLength)[i%bufferLength] = carrierFunc(baseFrequency, carrierType, i);
+        }
+        return carriers;
     }
 
-    public float[] genCarrier(int frequency, String carrierType) {
-        return genCarrier(frequency, carrierType, this.carrierLength);
+    public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, float carrierLength) {
+        return genCarrier(baseFrequency, carrierType, bufferLength, carrierLength);
     }
 
-    public float[] genCarrier(int frequency) {
-        return genCarrier(frequency, "sin", this.carrierLength);
+    public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, int bufferLength) {
+        return genCarrier(baseFrequency, carrierType, bufferLength, -1.0f);
+    }
+    public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType) {
+        return genCarrier(baseFrequency, carrierType, this.bufferLength);
+    }
+
+    public ArrayList<float[]> genCarrier(int baseFrequency, float carrierLength) {
+        return genCarrier(baseFrequency, "sin", carrierLength);
     }
 }

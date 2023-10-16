@@ -3,6 +3,8 @@ package Project0;
 import physics.base.BaseAudioPhysics;
 import physics.base.CarrierGenerator;
 
+import java.util.ArrayList;
+
 public class Task1 implements Runnable {
     private final BaseAudioPhysics baseAudioPhysics;
     private final CarrierGenerator carrierGenerator;
@@ -14,13 +16,13 @@ public class Task1 implements Runnable {
     @Override
     public void run() {
         stopReq = false;
-        float[] carrier = carrierGenerator.genCarrier(441);
+        ArrayList<float[]> carriers = carrierGenerator.genCarrier(441, 10.0f);
         baseAudioPhysics.stop();
         while (!Thread.currentThread().isInterrupted() && !this.stopReq) {
             try {
                 baseAudioPhysics.clearRxBuffer();
                 /* play 10s tones and record */
-                for (int i = 0; i < baseAudioPhysics.getSampleRate() * 10 / baseAudioPhysics.getBufferSize(); i++) {
+                for (float[] carrier : carriers) {
                     baseAudioPhysics.put(carrier);
                 }
 
