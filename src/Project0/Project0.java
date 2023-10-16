@@ -15,13 +15,13 @@ public class Project0 {
 
         System.out.println("Going to show Task1. Enter to start");
         if (scanner.hasNextLine()) {
-            String dummy = scanner.nextLine();
+            scanner.nextLine();
             task1.run();
         }
 
         System.out.println("Going to show Task2. Enter to start");
         if (scanner.hasNextLine()) {
-            String dummy = scanner.nextLine();
+            scanner.nextLine();
             task2.run();
         }
         scanner.close();

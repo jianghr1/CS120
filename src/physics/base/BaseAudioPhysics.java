@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class BaseAudioPhysics {
-    private final LinkedBlockingQueue<float[]> audioTxBuffer = new LinkedBlockingQueue<float[]>();
-    private final LinkedBlockingQueue<float[]> audioRxBuffer = new LinkedBlockingQueue<float[]>();
+    private final LinkedBlockingQueue<float[]> audioTxBuffer = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<float[]> audioRxBuffer = new LinkedBlockingQueue<>();
     private final AsioDriver asioDriver;
     private boolean started = false;
 
@@ -24,6 +24,7 @@ public class BaseAudioPhysics {
     public BaseAudioPhysics(int driverIdx) {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(driverIdx));
+        asioDriver.setSampleRate(48000.0);
         this.init();
     }
 
@@ -76,7 +77,7 @@ public class BaseAudioPhysics {
         return this.audioRxBuffer.take();
     }
 
-    public float[] poll() throws InterruptedException {
+    public float[] poll() {
         return this.audioRxBuffer.poll();
     }
 
@@ -84,7 +85,7 @@ public class BaseAudioPhysics {
         this.audioTxBuffer.put(waves);
     }
 
-    public void clearRxBuffer() throws InterruptedException {
+    public void clearRxBuffer() {
         this.audioRxBuffer.clear();
     }
 

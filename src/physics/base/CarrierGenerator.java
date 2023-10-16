@@ -17,7 +17,7 @@ public class CarrierGenerator {
     }
 
     public CarrierGenerator() {
-        this.sampleRate = 44100;
+        this.sampleRate = 48000;
         this.bufferLength = 512;
     }
 
@@ -30,7 +30,7 @@ public class CarrierGenerator {
     }
 
     private float carrierFunc(int baseFrequency, String carrierType, int step) {
-        float x = .0f;
+        float x;
         if (carrierType.compareToIgnoreCase("sin") == 0) {
             x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
         } else if (carrierType.compareToIgnoreCase("pulse") == 0) {
@@ -47,7 +47,7 @@ public class CarrierGenerator {
         return x;
     }
     public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, int bufferLength, float carrierLength) {
-        ArrayList<float[]> carriers = new ArrayList<float[]> ();
+        ArrayList<float[]> carriers = new ArrayList<> ();
         int numBuffers = Math.ceilDiv((int)(carrierLength * this.sampleRate), bufferLength);
         for (int i = 0; i < numBuffers; i++) {
             carriers.add(new float[bufferLength]);
@@ -74,6 +74,6 @@ public class CarrierGenerator {
     }
 
     public ArrayList<float[]> genSilence(float carrierLength) {
-        return genCarrier(-1, "Empty");
+        return genCarrier(0, "Empty", carrierLength);
     }
 }
