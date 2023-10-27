@@ -34,5 +34,6 @@ public class Task2 implements Runnable {
             return;
         }
         baseAudioPhysics.stop();
+        baseAudioPhysics.release();
     }
 }

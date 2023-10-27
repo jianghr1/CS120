@@ -18,18 +18,19 @@ public class BaseAudioPhysics {
     public BaseAudioPhysics() {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(0));
-        asioDriver.setSampleRate(48000.0);
+//        asioDriver.setSampleRate(48000.0);
         this.init();
     }
 
     public BaseAudioPhysics(int driverIdx) {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(driverIdx));
-        asioDriver.setSampleRate(48000.0);
+//        asioDriver.setSampleRate(48000.0);
         this.init();
     }
 
     private void init() {
+        asioDriver.openControlPanel();
         int bufferSize = getBufferSize();
 
         Listener listener = new Listener(audioTxBuffer, audioRxBuffer, bufferSize);
@@ -116,5 +117,9 @@ public class BaseAudioPhysics {
         }
         System.out.println("Recorded waves have been transferred to Tx buffer.");
         return waves;
+    }
+
+    public void release() {
+        this.asioDriver.shutdownAndUnloadDriver();
     }
 }
