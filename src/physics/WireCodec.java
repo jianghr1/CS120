@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class WireCodec {
+public class WireCodec implements Codec{
     private static float[] carrier;
     private static float[] preamble;
     WireCodec(double sampleRate, int bufferSize, int bitWidth, int frameSize) throws IOException {
@@ -24,7 +24,7 @@ public class WireCodec {
         }
 
         try {
-            Path path = Paths.get("carrier.txt");
+            Path path = Paths.get("preamble.txt");
             String preambleString = Files.readString(path);
             String[] preambleStringSplit = preambleString.split(" ");
             preamble = new float[preambleStringSplit.length];
@@ -32,11 +32,13 @@ public class WireCodec {
                 preamble[i] = Float.parseFloat(preambleStringSplit[i]);
             }
         } catch (IOException e) {
-            System.err.println("Fail to load carrier");
-            throw new IOException("Fail to load carrier: " + e.getMessage());
+            System.err.println("Fail to load preamble");
+            throw new IOException("Fail to load preamble: " + e.getMessage());
         }
+        System.out.println(carrier.length);
     }
 
+    @Override
     public float[] modulate(byte[] frame, int bitWidth) {
         int waveLength = preamble.length + frame.length * 8 * bitWidth;
         float[] wave = new float[waveLength];
@@ -46,6 +48,7 @@ public class WireCodec {
             wave[waveIndex++] = p;
         }
 
+        System.out.println(frame.length);
         for (byte b : frame) {
             for (int i = 7; i >= 0; i--) {
                 int bit = (b >> i) & 1;
@@ -65,10 +68,12 @@ public class WireCodec {
         return wave;
     }
 
+    @Override
     public float[] getPreamble() {
         return preamble;
     }
 
+    @Override
     public byte[] demodulate(float[] data, int bitWidth) {
         float[] corr = new float[data.length];
         for (int i = 0; i < data.length; i++) {

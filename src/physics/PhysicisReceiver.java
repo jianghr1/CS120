@@ -13,22 +13,22 @@ public class PhysicisReceiver implements Runnable{
     private final LinkedBlockingQueue<float []> rxAudioBuffer;
     private final LinkedBlockingQueue<byte []> rxDataBuffer;
     private final int bitWidth;
-    private final WireCodec wireCodec;
+    private final Codec codec;
     private final int frameSize;
     public PhysicisReceiver(LinkedBlockingQueue<float[]> rxAudioBuffer,
                                LinkedBlockingQueue<byte[]> rxDataBuffer,
                                int bitWidth,
-                               WireCodec wireCodec,
+                               Codec codec,
                                int frameSize) {
         this.rxAudioBuffer = rxAudioBuffer;
         this.rxDataBuffer = rxDataBuffer;
         this.bitWidth = bitWidth;
-        this.wireCodec = wireCodec;
+        this.codec = codec;
         this.frameSize = frameSize;
     }
     @Override
     public void run() {
-        float[] preamble = wireCodec.getPreamble();
+        float[] preamble = codec.getPreamble();
         PhysicalReceiverState state = PhysicalReceiverState.DETECT;
         float power = 0f;
         int startIndex = 0;
@@ -77,6 +77,7 @@ public class PhysicisReceiver implements Runnable{
                                 syncQueue.add(0f);
                             }
                             state = PhysicalReceiverState.DECODE;
+                            System.out.println("go to Decode");
                             if (startIndex < lastCount) {
                                 int j = 0;
                                 for (; j < lastCount - startIndex; j++) {
@@ -95,7 +96,7 @@ public class PhysicisReceiver implements Runnable{
                     } else {
                         decode[currentDecodeIndex++] = currentSample;
                         if (currentDecodeIndex == decode.length) {
-                            byte[] decoded = wireCodec.demodulate(decode, bitWidth);
+                            byte[] decoded = codec.demodulate(decode, bitWidth);
                             validateAndPutData(decoded);
                             startIndex = 0;
                             currentDecodeIndex = 0;

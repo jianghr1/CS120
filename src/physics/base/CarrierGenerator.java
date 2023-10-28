@@ -37,6 +37,8 @@ public class CarrierGenerator {
             x = (Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) >= 0) ? 1.0f : -1.0f;
         } else if (carrierType.compareToIgnoreCase("Proj1-Task2") == 0) {
             x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) + (float) Math.sin(step / this.sampleRate * 10 * baseFrequency * 2 * Math.PI);
+        } else if (carrierType.compareToIgnoreCase("chirp") == 0) {
+            x = (float) Math.sin((step / this.sampleRate) * baseFrequency * (1000 * step / this.sampleRate + 1) * 2 * Math.PI);
         } else if (carrierType.compareToIgnoreCase("None") == 0) {
             x = .0f;
         } else if (carrierType.compareToIgnoreCase("Empty") == 0) {
@@ -75,5 +77,12 @@ public class CarrierGenerator {
 
     public ArrayList<float[]> genSilence(float carrierLength) {
         return genCarrier(0, "Empty", carrierLength);
+    }
+    public float[] genCarrierArray(int baseFrequency, String carrierType, int carrierLength) {
+        float[] carriers = new float[carrierLength];
+        for (int i = 0; i < carrierLength; i++){
+            carriers[i] = carrierFunc(baseFrequency, carrierType, i);
+        }
+        return carriers;
     }
 }

@@ -20,25 +20,29 @@ public class Physicis {
     private final AsioDriver asioDriver;
     private final Thread rxThread;
     private final Thread txThread;
-    private final WireCodec wireCodec;
+    private final Codec codec;
 
-    public Physicis(int bitWidth, int frameSize) throws IOException {
+    public Physicis(int bitWidth, int frameSize, String codecType) throws IOException {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(0));
 
         asioDriver.openControlPanel();
         try {
-            asioDriver.setSampleRate(48000f);
+//            asioDriver.setSampleRate(48000f);
         } catch (Exception e) {
             System.err.println("Fail to set sample rate: " + e.getMessage());
         }
 
         int bufferSize = getBufferSize();
         double sampleRate = getSampleRate();
-        wireCodec = new WireCodec(sampleRate, bufferSize, bitWidth, frameSize);
+        if (codecType.compareToIgnoreCase("wire") == 0) {
+            codec = new WireCodec(sampleRate, bufferSize, bitWidth, frameSize);
+        } else {
+            codec = new MicCodec(sampleRate, bufferSize, bitWidth, frameSize);
+        }
 
-        PhysicisReceiver receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, wireCodec, frameSize);
-        PhysicisTransmitter transmitter = new PhysicisTransmitter(txAudioBuffer, txDataBuffer, bitWidth, wireCodec, getBufferSize());
+        PhysicisReceiver receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, codec, frameSize);
+        PhysicisTransmitter transmitter = new PhysicisTransmitter(txAudioBuffer, txDataBuffer, bitWidth, codec, getBufferSize());
 
         rxThread = new Thread(receiver);
         txThread = new Thread(transmitter);
@@ -59,18 +63,18 @@ public class Physicis {
 
         double sampleRate = getSampleRate();
         int bufferSize = getBufferSize();
-        Listener listener = new Listener(rxAudioBuffer, txAudioBuffer, bufferSize);
+        Listener listener = new Listener(txAudioBuffer, rxAudioBuffer, bufferSize);
         asioDriver.addAsioDriverListener(listener);
 
         Set<AsioChannel> activeChannels = new HashSet<>();
         activeChannels.add(asioDriver.getChannelInput(0));
         activeChannels.add(asioDriver.getChannelOutput(0));
         asioDriver.createBuffers(activeChannels);
+        asioDriver.start();
 
         rxThread.start();
         txThread.start();
 
-        asioDriver.start();
 
         started = true;
     }

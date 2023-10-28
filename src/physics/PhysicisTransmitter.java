@@ -6,17 +6,17 @@ public class PhysicisTransmitter implements Runnable{
     private final LinkedBlockingQueue<float []> txAudioBuffer;
     private final LinkedBlockingQueue<byte []> txDataBuffer;
     private final int bitWidth;
-    private final WireCodec wireCodec;
+    private final Codec codec;
     private final int bufferSize;
     public PhysicisTransmitter(LinkedBlockingQueue<float[]> txAudioBuffer,
                                LinkedBlockingQueue<byte[]> txDataBuffer,
                                int bitWidth,
-                               WireCodec wireCodec,
+                               Codec codec,
                                int bufferSize) {
         this.txAudioBuffer = txAudioBuffer;
         this.txDataBuffer = txDataBuffer;
         this.bitWidth = bitWidth;
-        this.wireCodec = wireCodec;
+        this.codec = codec;
         this.bufferSize = bufferSize;
     }
     @Override
@@ -29,7 +29,7 @@ public class PhysicisTransmitter implements Runnable{
             try {
                 byte[] data = txDataBuffer.take();
                 byte[] frame = Arrays.copyOf(data, data.length);
-                float[] modulated = wireCodec.modulate(frame, bitWidth);
+                float[] modulated = codec.modulate(frame, bitWidth);
                 int chunkNums = (int) Math.ceil((double) modulated.length / bufferSize);
                 for (int i = 0; i < chunkNums - 1; i++) {
                     float[] chunk = Arrays.copyOfRange(modulated, i * bufferSize, (i + 1) * bufferSize);
