@@ -12,8 +12,8 @@ public class MicCodec implements Codec {
     private static float[] preamble;
     MicCodec(double sampleRate, int bufferSize, int bitWidth, int frameSize) {
         CarrierGenerator carrierGenerator = new CarrierGenerator(sampleRate, bufferSize);
-        carrier = carrierGenerator.genCarrierArray(1000,"sin",8*bitWidth*(frameSize+32));
-        preamble = carrierGenerator.genCarrierArray(2000,"chirp",512);
+        carrier = carrierGenerator.genCarrierArray(3000,"sin",8*bitWidth*(frameSize+32));
+        preamble = carrierGenerator.genCarrierArray(6000,"sin",64);
         System.out.println(carrier.length);
     }
     @Override

@@ -18,14 +18,13 @@ public class Task3{
     String GT_input;
     LinkedBlockingQueue<byte[]> a = new LinkedBlockingQueue<>();
     public Task3(int frameSize) throws IOException, InterruptedException {
-        physics = new Physicis(64, frameSize, "mic");
+        physics = new Physicis(16, frameSize, "mic");
 
         Path path = Paths.get("INPUT.txt");
         GT_input = Files.readString(path);
         char[] input_data = GT_input.toCharArray();
         byte[] ori_data = new byte[(input_data.length+7)/8];
         Arrays.fill(ori_data, (byte) 0);
-        System.out.println(input_data.length);
         for (int i = 0; i < input_data.length; i++) {
             ori_data[i/8] <<= 1;
             ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);

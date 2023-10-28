@@ -44,7 +44,7 @@ public class PhysicisReceiver implements Runnable{
 
         float[] previousData = null;
 
-        float syncPowerThreshold = 0.008f;
+        float syncPowerThreshold = 0.08f;
 
         while (!Thread.currentThread().isInterrupted()) {
             try {

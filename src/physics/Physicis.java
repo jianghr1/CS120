@@ -27,11 +27,6 @@ public class Physicis {
         asioDriver = AsioDriver.getDriver(driverNameList.get(0));
 
         asioDriver.openControlPanel();
-        try {
-//            asioDriver.setSampleRate(48000f);
-        } catch (Exception e) {
-            System.err.println("Fail to set sample rate: " + e.getMessage());
-        }
 
         int bufferSize = getBufferSize();
         double sampleRate = getSampleRate();
