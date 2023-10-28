@@ -2,8 +2,10 @@ package physics;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Arrays;
+import java.util.random.RandomGenerator;
 
 enum PhysicalReceiverState {
     DETECT,
@@ -44,7 +46,7 @@ public class PhysicisReceiver implements Runnable{
 
         float[] previousData = null;
 
-        float syncPowerThreshold = 0.08f;
+        float syncPowerThreshold = 0.04f;
 
         while (!Thread.currentThread().isInterrupted()) {
             try {

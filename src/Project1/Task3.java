@@ -12,23 +12,34 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.StringJoiner;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.random.RandomGenerator;
 
 public class Task3{
     private final Physicis physics;
     String GT_input;
     LinkedBlockingQueue<byte[]> a = new LinkedBlockingQueue<>();
     public Task3(int frameSize) throws IOException, InterruptedException {
-        physics = new Physicis(16, frameSize, "mic");
+        physics = new Physicis(32, frameSize, "mic");
 
         Path path = Paths.get("INPUT.txt");
-        GT_input = Files.readString(path);
-        char[] input_data = GT_input.toCharArray();
+        char[] input_data = Files.readString(path).toCharArray();
         byte[] ori_data = new byte[(input_data.length+7)/8];
         Arrays.fill(ori_data, (byte) 0);
         for (int i = 0; i < input_data.length; i++) {
+            ori_data[i/8] = (byte) 0x55;
             ori_data[i/8] <<= 1;
             ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
         }
+//        RandomGenerator.getDefault().nextBytes(ori_data);
+        StringBuilder temp = new StringBuilder();
+        for (byte b : ori_data){
+            for (int i = 0; i < 8; i++)
+            {
+                temp.append((b & 0xff) > 127 ? "1" : "0");
+                b <<= 1;
+            }
+        }
+        GT_input = temp.toString();
         int numFrames = (int) Math.ceil((double) ori_data.length / frameSize);
         for (int i = 0; i < numFrames - 1; i++) {
             byte[] frame = Arrays.copyOfRange(ori_data, i * frameSize, (i+1) * frameSize);
@@ -50,11 +61,11 @@ public class Task3{
 
     public void run() throws InterruptedException, IOException {
         physics.start();
-        Thread.sleep(100);
+        Thread.sleep(1500);
         while (!physics.sendComplete()) {
             Thread.sleep(100);
         }
-        Thread.sleep(200);
+        Thread.sleep(400);
         StringBuilder output = new StringBuilder();
         byte[] frame = physics.readNoWait();
 //        byte[] frame=a.poll();

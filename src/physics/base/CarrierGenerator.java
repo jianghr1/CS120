@@ -28,17 +28,29 @@ public class CarrierGenerator {
     public void setBufferLength(int bufferLength) {
         this.bufferLength = bufferLength;
     }
-
+    private float carrierSin(int baseFrequency, int step) {
+        return (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
+    }
+    private float carrierSin(double baseFrequency, int step) {
+        return (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
+    }
     private float carrierFunc(int baseFrequency, String carrierType, int step) {
         float x;
         if (carrierType.compareToIgnoreCase("sin") == 0) {
-            x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
+            x = carrierSin(baseFrequency, step);
         } else if (carrierType.compareToIgnoreCase("pulse") == 0) {
-            x = (Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) >= 0) ? 1.0f : -1.0f;
+            x = (carrierSin(baseFrequency, step) >= 0) ? 1.0f : -1.0f;
         } else if (carrierType.compareToIgnoreCase("Proj1-Task2") == 0) {
-            x = (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI) + (float) Math.sin(step / this.sampleRate * 10 * baseFrequency * 2 * Math.PI);
+            x = carrierSin(baseFrequency, step) + carrierSin(baseFrequency*10, step);
+        } else if (carrierType.compareToIgnoreCase("odd-sin") == 0) {
+            x = carrierSin(baseFrequency * 1, step) +
+                carrierSin(baseFrequency * 5, step) +
+                carrierSin(baseFrequency * 11, step);
         } else if (carrierType.compareToIgnoreCase("chirp") == 0) {
-            x = (float) Math.sin((step / this.sampleRate) * baseFrequency * (1000 * step / this.sampleRate + 1) * 2 * Math.PI);
+            x = carrierSin(baseFrequency * (100 * step / this.sampleRate + 1), step);
+        } else if (carrierType.compareToIgnoreCase("odd-chirp") == 0) {
+            x = carrierSin(baseFrequency * (100 * step / this.sampleRate + 1), step) +
+                carrierSin(baseFrequency * 5 * (100 * step / this.sampleRate + 1), step);
         } else if (carrierType.compareToIgnoreCase("None") == 0) {
             x = .0f;
         } else if (carrierType.compareToIgnoreCase("Empty") == 0) {

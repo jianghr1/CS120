@@ -6,14 +6,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 public class MicCodec implements Codec {
     private static float[] carrier;
     private static float[] preamble;
     MicCodec(double sampleRate, int bufferSize, int bitWidth, int frameSize) {
         CarrierGenerator carrierGenerator = new CarrierGenerator(sampleRate, bufferSize);
-        carrier = carrierGenerator.genCarrierArray(3000,"sin",8*bitWidth*(frameSize+32));
-        preamble = carrierGenerator.genCarrierArray(6000,"sin",64);
+        carrier = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth),"odd-sin",8*bitWidth*(frameSize+32));
+        preamble = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth * 2),"odd-sin",bitWidth*16);
+        for (int i = preamble.length/2; i < preamble.length; i++) {
+            preamble[i] = preamble[preamble.length-i];
+        }
         System.out.println(carrier.length);
     }
     @Override
@@ -49,6 +53,7 @@ public class MicCodec implements Codec {
     public float[] getPreamble() {
         return preamble;
     }
+
 
     @Override
     public byte[] demodulate(float[] data, int bitWidth) {

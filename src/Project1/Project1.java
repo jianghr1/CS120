@@ -19,7 +19,7 @@ public class Project1 {
 //            task2.run();
 //        }
 
-        Task3 task3 = new Task3(320);
+        Task3 task3 = new Task3(128);
         System.out.println("Going to show Task2. Enter to start");
         if (scanner.hasNextLine()) {
             scanner.nextLine();
