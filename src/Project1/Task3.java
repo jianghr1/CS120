@@ -30,7 +30,7 @@ public class Task3{
             ori_data[i/8] <<= 1;
             ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
         }
-//        RandomGenerator.getDefault().nextBytes(ori_data);
+        RandomGenerator.getDefault().nextBytes(ori_data);
         StringBuilder temp = new StringBuilder();
         for (byte b : ori_data){
             for (int i = 0; i < 8; i++)
@@ -91,6 +91,8 @@ public class Task3{
                 cnt++;
             }
         }
+        path = Paths.get("GT.txt");
+        Files.writeString(path, GT_input);
         System.out.println((double) cnt/GT_input.length());
     }
 }
