@@ -66,7 +66,8 @@ public class Physicis {
         activeChannels.add(asioDriver.getChannelOutput(0));
         asioDriver.createBuffers(activeChannels);
         asioDriver.start();
-
+        rxAudioBuffer.clear();
+        txAudioBuffer.clear();
         rxThread.start();
         txThread.start();
 

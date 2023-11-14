@@ -19,12 +19,13 @@ public class Project1 {
 //            task2.run();
 //        }
 
-        Task3 task3 = new Task3(125);
-        System.out.println("Going to show Task2. Enter to start");
-        if (scanner.hasNextLine()) {
-            scanner.nextLine();
-            task3.run();
-        }
+        Task3 task3 = new Task3(30);
+
+        task3.run();
+//        System.out.println("Going to show Task3. Enter to start");
+//        if (scanner.hasNextLine()) {
+//            scanner.nextLine();
+//        }
         scanner.close();
     }
 }

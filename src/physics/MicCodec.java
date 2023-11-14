@@ -13,8 +13,8 @@ public class MicCodec implements Codec {
     private static float[] preamble;
     MicCodec(double sampleRate, int bufferSize, int bitWidth, int frameSize) {
         CarrierGenerator carrierGenerator = new CarrierGenerator(sampleRate, bufferSize);
-        carrier = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth),"odd-sin",8*bitWidth*(frameSize+32));
-        preamble = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth * 2),"odd-sin",bitWidth*16);
+        carrier = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth),"sin",8*bitWidth*(frameSize+2));
+        preamble = carrierGenerator.genCarrierArray((int) (sampleRate/bitWidth * 2),"sin",8*bitWidth*2);
         for (int i = preamble.length/2; i < preamble.length; i++) {
             preamble[i] = preamble[preamble.length-i];
         }

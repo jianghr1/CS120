@@ -35,8 +35,6 @@ public class WireCodec implements Codec{
             System.err.println("Fail to load preamble");
             throw new IOException("Fail to load preamble: " + e.getMessage());
         }
-        System.out.println(carrier.length);
-        System.out.println(preamble.length);
     }
 
     @Override

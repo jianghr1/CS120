@@ -9,7 +9,8 @@ import java.util.random.RandomGenerator;
 
 enum PhysicalReceiverState {
     DETECT,
-    DECODE
+    DECODE,
+    COOLDOWN
 }
 public class PhysicisReceiver implements Runnable{
     private final LinkedBlockingQueue<float []> rxAudioBuffer;
@@ -43,10 +44,11 @@ public class PhysicisReceiver implements Runnable{
         int currentDecodeIndex = 0;
         int totalCount = 0;
         int dataIndex = 0;
+        int coolDown = 0;
 
         float[] previousData = null;
 
-        float syncPowerThreshold = 0.04f;
+        float syncPowerThreshold = 0.8f;
 
         while (!Thread.currentThread().isInterrupted()) {
             try {
@@ -95,14 +97,22 @@ public class PhysicisReceiver implements Runnable{
                             }
                             currentDecodeIndex = dataIndex - startIndex + 1;
                         }
-                    } else {
+                    } else if (state == PhysicalReceiverState.DECODE) {
                         decode[currentDecodeIndex++] = currentSample;
                         if (currentDecodeIndex == decode.length) {
                             byte[] decoded = codec.demodulate(decode, bitWidth);
                             validateAndPutData(decoded);
                             startIndex = 0;
                             currentDecodeIndex = 0;
+                            state = PhysicalReceiverState.COOLDOWN;
+                            System.out.println("go to cool");
+                            coolDown = 0;
+                        }
+                    } else {
+                        coolDown++;
+                        if (coolDown >= preamble.length) {
                             state = PhysicalReceiverState.DETECT;
+                            System.out.println("go to detect");
                         }
                     }
                     dataIndex += 1;
