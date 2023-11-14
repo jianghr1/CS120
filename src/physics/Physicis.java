@@ -115,7 +115,7 @@ public class Physicis {
     }
 
     public boolean sendComplete() {
-        return txAudioBuffer.isEmpty();
+        return txAudioBuffer.isEmpty() && txDataBuffer.isEmpty();
     }
 
 }

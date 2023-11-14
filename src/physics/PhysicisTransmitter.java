@@ -22,7 +22,7 @@ public class PhysicisTransmitter implements Runnable{
     @Override
     public void run() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -52,8 +52,6 @@ public class PhysicisTransmitter implements Runnable{
                 txAudioBuffer.put(chunk);
                 float[] paddingChunk = new float[bufferSize];
                 Arrays.fill(paddingChunk, 0);
-                txAudioBuffer.put(paddingChunk);
-                txAudioBuffer.put(paddingChunk);
                 txAudioBuffer.put(paddingChunk);
                 txAudioBuffer.put(paddingChunk);
             } catch (InterruptedException e) {

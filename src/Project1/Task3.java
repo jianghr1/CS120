@@ -19,12 +19,12 @@ public class Task3{
     String GT_input;
     LinkedBlockingQueue<byte[]> a = new LinkedBlockingQueue<>();
     public Task3(int frameSize) throws IOException, InterruptedException {
-        physics = new Physicis(8, frameSize, "mic");
+        physics = new Physicis(4, frameSize, "mic");
 
 //        Path path = Paths.get("INPUT.txt");
 //        char[] input_data = Files.readString(path).toCharArray();
 //        GT_input = String.valueOf(input_data);
-        byte[] ori_data = new byte[frameSize * 16];
+        byte[] ori_data = new byte[frameSize * 4];
         Arrays.fill(ori_data, (byte) 0);
 //        for (int i = 0; i < input_data.length; i++) {
 //            ori_data[i/8] <<= 1;
@@ -59,7 +59,6 @@ public class Task3{
 
     public void run() throws InterruptedException, IOException {
         physics.start();
-        Thread.sleep(1500);
         while (!physics.sendComplete()) {
             Thread.sleep(100);
         }
