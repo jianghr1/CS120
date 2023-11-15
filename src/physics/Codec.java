@@ -38,6 +38,32 @@ public class Codec {
         return wave;
     }
 
+    public float[] modulateBit(byte[] frame, int bitWidth) {
+        int waveLength = preamble.length + frame.length * bitWidth;
+        float[] wave = new float[waveLength];
+
+        int waveIndex = 0;
+        for (float p : preamble) {
+            wave[waveIndex++] = p;
+        }
+
+        for (byte b : frame) {
+            int bit = b & 1;
+            if (bit == 0) {
+                for (int j = 0; j < bitWidth; j++) {
+                    wave[waveIndex] = -carrier[waveIndex - preamble.length];
+                    waveIndex += 1;
+                }
+            } else {
+                for (int j = 0; j < bitWidth; j++) {
+                    wave[waveIndex] = carrier[waveIndex - preamble.length];
+                    waveIndex += 1;
+                }
+            }
+        }
+        return wave;
+    }
+
     public float[] getPreamble() {
         return preamble;
     }
@@ -60,6 +86,28 @@ public class Codec {
                 if (power > 0) {
                     b += 1;
                 }
+            }
+            frame[i] = (byte) b;
+        }
+
+        return frame;
+    }
+
+    public byte[] demodulateBit(float[] data, int bitWidth) {
+        float[] corr = new float[data.length];
+        for (int i = 0; i < data.length; i++) {
+            corr[i] = data[i] * carrier[i];
+        }
+
+        byte[] frame = new byte[data.length / bitWidth];
+        for (int i = 0; i < frame.length; i++) {
+            int b = 0;
+            float power = 0;
+            for (int k = 1; k < bitWidth - 1; k++) {
+                power += corr[bitWidth * i + k];
+            }
+            if (power > 0) {
+                b += 1;
             }
             frame[i] = (byte) b;
         }

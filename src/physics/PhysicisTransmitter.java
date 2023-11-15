@@ -53,7 +53,6 @@ public class PhysicisTransmitter implements Runnable{
                 float[] paddingChunk = new float[bufferSize];
                 Arrays.fill(paddingChunk, 0);
                 txAudioBuffer.put(paddingChunk);
-                txAudioBuffer.put(paddingChunk);
             } catch (InterruptedException e) {
                 return;
             }
