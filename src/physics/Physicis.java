@@ -20,7 +20,6 @@ public class Physicis {
     private final AsioDriver asioDriver;
     private final Thread rxThread;
     private final Thread txThread;
-    private final Codec codec;
 
     public Physicis(int bitWidth, int frameSize, String codecType) throws IOException {
         List<String> driverNameList = AsioDriver.getDriverNames();
@@ -30,6 +29,8 @@ public class Physicis {
 
         int bufferSize = getBufferSize();
         double sampleRate = getSampleRate();
+        Codec codec;
+
         if (codecType.compareToIgnoreCase("wire") == 0) {
             codec = new WireCodec(sampleRate, bufferSize, bitWidth, frameSize);
         } else {
