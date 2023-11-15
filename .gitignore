@@ -27,3 +27,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+INPUT.txt
+OUTPUT.txt
+GT.txt
+*.bin
