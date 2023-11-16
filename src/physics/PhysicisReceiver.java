@@ -18,16 +18,19 @@ public class PhysicisReceiver implements Runnable{
     private final int bitWidth;
     private final Codec codec;
     private final int frameSize;
+    private final boolean isHamming;
     public PhysicisReceiver(LinkedBlockingQueue<float[]> rxAudioBuffer,
                                LinkedBlockingQueue<byte[]> rxDataBuffer,
                                int bitWidth,
                                Codec codec,
-                               int frameSize) {
+                               int frameSize,
+                               boolean isHamming) {
         this.rxAudioBuffer = rxAudioBuffer;
         this.rxDataBuffer = rxDataBuffer;
         this.bitWidth = bitWidth;
         this.codec = codec;
         this.frameSize = frameSize;
+        this.isHamming = isHamming;
     }
     @Override
     public void run() {
@@ -40,7 +43,15 @@ public class PhysicisReceiver implements Runnable{
             syncQueue.add(0f);
         }
         float syncPowerLocalMax = 0f;
-        float[] decode = new float[bitWidth * frameSize * 8];
+
+        int numSamples = bitWidth * frameSize * 8;
+
+        if (isHamming)
+        {
+            numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / 120f) * 127);
+        }
+        System.out.println(numSamples);
+        float[] decode = new float[numSamples];
         int currentDecodeIndex = 0;
         int totalCount = 0;
         int dataIndex = 0;
@@ -48,7 +59,7 @@ public class PhysicisReceiver implements Runnable{
 
         float[] previousData = null;
 
-        float syncPowerThreshold = 0.8f;
+        float syncPowerThreshold = 0.08f;
 
         while (!Thread.currentThread().isInterrupted()) {
             try {
@@ -81,7 +92,7 @@ public class PhysicisReceiver implements Runnable{
                                 syncQueue.add(0f);
                             }
                             state = PhysicalReceiverState.DECODE;
-                            System.out.println("go to Decode");
+//                            System.out.println("go to Decode");
                             if (startIndex < lastCount) {
                                 int j = 0;
                                 for (; j < lastCount - startIndex; j++) {
@@ -105,14 +116,14 @@ public class PhysicisReceiver implements Runnable{
                             startIndex = 0;
                             currentDecodeIndex = 0;
                             state = PhysicalReceiverState.COOLDOWN;
-                            System.out.println("go to cool");
+//                            System.out.println("go to cool");
                             coolDown = 0;
                         }
                     } else {
                         coolDown++;
                         if (coolDown >= preamble.length) {
                             state = PhysicalReceiverState.DETECT;
-                            System.out.println("go to detect");
+//                            System.out.println("go to detect");
                         }
                     }
                     dataIndex += 1;
@@ -126,7 +137,7 @@ public class PhysicisReceiver implements Runnable{
 
     private void validateAndPutData(byte[] decoded) throws InterruptedException {
         byte[] data = Arrays.copyOf(decoded, frameSize);
-        rxDataBuffer.put(decoded);
+        rxDataBuffer.put(data);
         // TBD: add CRC here
 //        byte[] data = Arrays.copyOf(decoded, frameSize - 2);
 //        long crc = CRC.calculateCRC(CRC.Parameters.CRC16, data);

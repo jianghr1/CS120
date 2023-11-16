@@ -11,7 +11,7 @@ public class Project2 {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Currently on Project1.");
 
-        Task1 task1 = new Task1(254);
+        Task1 task1 = new Task1(64);
 
         System.out.println("Going to show Task3. Enter to start");
         if (scanner.hasNextLine()) {

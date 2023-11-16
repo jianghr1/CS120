@@ -17,9 +17,8 @@ import java.util.random.RandomGenerator;
 public class Task3{
     private final Physicis physics;
     String GT_input;
-    LinkedBlockingQueue<byte[]> a = new LinkedBlockingQueue<>();
     public Task3(int frameSize) throws IOException, InterruptedException {
-        physics = new Physicis(4, frameSize, "mic");
+        physics = new Physicis(4, frameSize, "mic", false);
 
 //        Path path = Paths.get("INPUT.txt");
 //        char[] input_data = Files.readString(path).toCharArray();

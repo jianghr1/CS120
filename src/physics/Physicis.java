@@ -12,8 +12,8 @@ import com.synthbot.jasiohost.AsioDriverInfo;
 import physics.base.Listener;
 
 public class Physicis {
-    private final LinkedBlockingQueue<float []> txAudioBuffer = new LinkedBlockingQueue<float[]>();
-    private final LinkedBlockingQueue<float []> rxAudioBuffer = new LinkedBlockingQueue<float[]>();
+    private final LinkedBlockingQueue<float []> txAudioBuffer = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<float []> rxAudioBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<byte []> txDataBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<byte []> rxDataBuffer = new LinkedBlockingQueue<>();
     private boolean started = false;
@@ -21,7 +21,7 @@ public class Physicis {
     private final Thread rxThread;
     private final Thread txThread;
 
-    public Physicis(int bitWidth, int frameSize, String codecType) throws IOException {
+    public Physicis(int bitWidth, int frameSize, String codecType, boolean isHamming) throws IOException {
         List<String> driverNameList = AsioDriver.getDriverNames();
         asioDriver = AsioDriver.getDriver(driverNameList.get(0));
 
@@ -37,7 +37,9 @@ public class Physicis {
             codec = new MicCodec(sampleRate, bufferSize, bitWidth, frameSize);
         }
 
-        PhysicisReceiver receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, codec, frameSize);
+        codec.isHamming = isHamming;
+
+        PhysicisReceiver receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, codec, frameSize, isHamming);
         PhysicisTransmitter transmitter = new PhysicisTransmitter(txAudioBuffer, txDataBuffer, bitWidth, codec, getBufferSize());
 
         rxThread = new Thread(receiver);
@@ -57,7 +59,6 @@ public class Physicis {
             return;
         }
 
-        double sampleRate = getSampleRate();
         int bufferSize = getBufferSize();
         Listener listener = new Listener(txAudioBuffer, rxAudioBuffer, bufferSize);
         asioDriver.addAsioDriverListener(listener);
