@@ -62,7 +62,7 @@ public class MacTransmitter implements Runnable {
             try {
                 MacFrame txFrame = txFrameBuffer.poll();
                 if (txFrame != null) {
-                    System.out.println("transmitting"+ txFrameIdx);
+                    System.out.println("transmitting"+ txFrameIdx + "from" + txFrame.src+"to"+txFrame.dest);
                     txFrame.idx = txFrameIdx % 8;
                     // CSMA here
                     byte[] txData = txFrame.toBytes();

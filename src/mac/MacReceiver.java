@@ -76,11 +76,11 @@ public class MacReceiver implements Runnable {
                     MacFrame frame = MacFrame.parseFrame(phyData);
                     if (frame.dest == addr) {
                         if (frame.idx == rxFrameIdx % 8) {
-                            System.err.println("Recieve duplicated package");
+                            System.err.println("Recieve duplicated package: get " + frame.idx + "expect " + (rxFrameIdx + 1));
                         } else if (frame.idx == (rxFrameIdx + 1) % 8) {
                             rxFrameIdx++;
                             rxFrameBuffer.put(frame);
-                            System.out.println("Receive" + rxFrameIdx + ", Ack: " + frame.requireACK());
+                            System.out.println("Receive" + rxFrameIdx + "from" + frame.src+"to"+frame.dest + ", Ack: " + frame.requireACK());
                         } else {
                             System.err.println("UnRecognized Package");
                         }
