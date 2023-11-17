@@ -45,7 +45,7 @@ public class Task2 {
         if (receiver) {
             byte[] rec_data = new byte[ori_data.length];
             int frameIdx = 0;
-            MacFrame frame = mac.read(1000);
+            MacFrame frame = mac.read();
             while (frame != null && !frame.dataEnd()) {
                 System.arraycopy(frame.data, 0, rec_data, frameIdx * frameSize, frameSize);
                 frameIdx++;

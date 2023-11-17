@@ -25,13 +25,13 @@ public class Mac implements Runnable {
         this.ACKTimeout = ACKTimeout;
         this.maxRetransmitTimes = maxRetransmitTimes;
 
-        phy = new Physicis(4, this.frameSize + 2, "wire", true);
+        phy = new Physicis(4, this.frameSize, "wire", true);
 
         macThread = new Thread(this);
 
-        ACKData = new byte[frameSize - 2];
+        ACKData = new byte[this.frameSize - 2];
 
-        for (int i = 0; i < frameSize - 2; i++) {
+        for (int i = 0; i < this.frameSize - 2; i++) {
             if (i % 3 == 0) {
                 ACKData[i] = 'A';
             } else if (i % 3 == 1) {
@@ -108,7 +108,7 @@ public class Mac implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
 
-                byte[] phyData = phy.read();
+                byte[] phyData = phy.readNoWait();
                 if (phyData != null) {
                     if (phyData.length == frameSize) {
                         MacFrame frame = MacFrame.parseFrame(phyData);
@@ -169,7 +169,7 @@ public class Mac implements Runnable {
     }
 
     public int getFramePayloadSize() {
-        return frameSize;
+        return frameSize-2;
     }
 
     private void sendACK(int dest, int idx) throws InterruptedException {
