@@ -25,7 +25,7 @@ bin/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
+### mac OS ###
 .DS_Store
 
 INPUT.txt
