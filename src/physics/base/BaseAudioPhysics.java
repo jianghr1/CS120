@@ -29,6 +29,10 @@ public class BaseAudioPhysics {
         this.init();
     }
 
+    public BaseAudioPhysics(String driverName) {
+        asioDriver = AsioDriver.getDriver(driverName);
+    }
+
     private void init() {
         asioDriver.openControlPanel();
         int bufferSize = getBufferSize();
@@ -43,10 +47,6 @@ public class BaseAudioPhysics {
         activeChannels.add(asioDriver.getChannelOutput(0));
 
         asioDriver.createBuffers(activeChannels);
-    }
-
-    public BaseAudioPhysics(String driverName) {
-        asioDriver = AsioDriver.getDriver(driverName);
     }
 
     public int getBufferSize() {
@@ -101,7 +101,7 @@ public class BaseAudioPhysics {
         /* start to play & record */
         this.start();
         /* wait 10 seconds */
-        Thread.sleep(10*1000);
+        Thread.sleep(10 * 1000);
         /* stop playing */
         this.stop();
     }

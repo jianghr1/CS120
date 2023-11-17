@@ -3,20 +3,22 @@ package mac;
 import physics.Physicis;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class MacTransmitter implements Runnable {
     private final Physicis phy;
+    private final LinkedBlockingQueue<MacFrame> txDispatchFrames;
     private final LinkedBlockingQueue<MacFrame> txFrameBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<Boolean> txResultBuffer = new LinkedBlockingQueue<>();
     private final int addr;
     private final long ACKTimeout;
     private final int maxRetransmitTimes;
+    private final Thread macThread;
     private boolean started = false;
 
-    private final Thread macThread;
-
-    MacTransmitter(Physicis phy, int addr, long ACKTimeout, int maxRetransmitTimes) {
+    MacTransmitter(Physicis phy, LinkedBlockingQueue<MacFrame> txDispatchFrames, int addr, long ACKTimeout, int maxRetransmitTimes) {
         this.phy = phy;
+        this.txDispatchFrames = txDispatchFrames;
         this.addr = addr;
         this.ACKTimeout = ACKTimeout;
         this.maxRetransmitTimes = maxRetransmitTimes;
@@ -62,7 +64,7 @@ public class MacTransmitter implements Runnable {
             try {
                 MacFrame txFrame = txFrameBuffer.poll();
                 if (txFrame != null) {
-                    System.out.println("transmitting"+ txFrameIdx + "from" + txFrame.src+"to"+txFrame.dest);
+                    System.out.println("transmitting" + txFrameIdx + "from" + txFrame.src + "to" + txFrame.dest);
                     txFrame.idx = txFrameIdx % 8;
                     // CSMA here
                     byte[] txData = txFrame.toBytes();
@@ -70,9 +72,8 @@ public class MacTransmitter implements Runnable {
                     if (txFrame.requireACK()) {
                         boolean success = false;
                         for (int i = 0; i < maxRetransmitTimes; i++) {
-                            byte[] data = phy.read(ACKTimeout);
-                            if (data != null) {
-                                MacFrame frame = MacFrame.parseFrame(data);
+                            MacFrame frame = txDispatchFrames.poll(ACKTimeout, TimeUnit.MILLISECONDS);
+                            if (frame != null) {
                                 if (frame.dest == addr) {
                                     if (frame.type == MacFrameType.ACK) {
                                         success = true;
@@ -80,14 +81,14 @@ public class MacTransmitter implements Runnable {
                                     }
                                 }
                             }
-                            System.out.println("transmitting"+ txFrameIdx +", Retry: " + (i+1));
+                            System.out.println("transmitting" + txFrameIdx + ", Retry: " + (i + 1));
                             if (i != maxRetransmitTimes - 1) {
                                 // Retransmit
                                 phy.write(txData);
                             }
                         }
                         txResultBuffer.put(success);
-                        System.out.println("transmitted"+ txFrameIdx +", Success: "+success);
+                        System.out.println("transmitted" + txFrameIdx + ", Success: " + success);
                     } else {
                         txResultBuffer.put(true);
                     }

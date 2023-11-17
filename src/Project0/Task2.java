@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Task2 implements Runnable {
     private final BaseAudioPhysics baseAudioPhysics;
     private final CarrierGenerator carrierGenerator;
+
     public Task2() {
         baseAudioPhysics = new BaseAudioPhysics();
         carrierGenerator = new CarrierGenerator(baseAudioPhysics.getSampleRate(), baseAudioPhysics.getBufferSize());

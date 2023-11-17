@@ -3,14 +3,12 @@ package mac;
 import physics.Physicis;
 
 import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class Mac{
+public class Mac {
     private final Physicis phy;
-
     private final MacTransmitter macTransmitter;
-
     private final MacReceiver macReceiver;
-
     private final int addr;
     private final int frameSize;
 
@@ -21,9 +19,11 @@ public class Mac{
 
         phy = new Physicis(4, this.frameSize + 2, "wire", true);
 
-        macTransmitter = new MacTransmitter(phy, addr, ACKTimeout, maxRetransmitTimes);
+        LinkedBlockingQueue<MacFrame> txDispatchFrames = new LinkedBlockingQueue<>();
 
-        macReceiver = new MacReceiver(phy, addr, this.frameSize + 2);
+        macTransmitter = new MacTransmitter(phy, txDispatchFrames, addr, ACKTimeout, maxRetransmitTimes);
+
+        macReceiver = new MacReceiver(phy, txDispatchFrames, addr, this.frameSize + 2);
     }
 
     public Mac(int addr) throws IOException {

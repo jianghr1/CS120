@@ -13,8 +13,7 @@ public class Codec {
         if (isHamming) {
             boolean[] bits = Hamming.encodeHamming(frame);
             return modulateBit(bits, bitWidth);
-        }
-        else {
+        } else {
             return modulateBit(utils.bytesToBits(frame), bitWidth);
         }
     }

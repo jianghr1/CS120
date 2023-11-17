@@ -18,7 +18,7 @@ public class Hamming {
         for (int iPkg = 0; iPkg < numPackages; iPkg++) {
 
             for (int idx = 0; idx < 127; idx++) {
-                if (((idx+1) & idx) != 0) {
+                if (((idx + 1) & idx) != 0) {
                     /* not verifying bit */
                     encoded[iPkg * 127 + idx] = rawIdx < bits.length && bits[rawIdx];
 
@@ -66,7 +66,7 @@ public class Hamming {
             }
 
             for (int idx = 0; idx < 127; idx++) {
-                if (((idx+1) & idx) != 0) {
+                if (((idx + 1) & idx) != 0) {
                     /* not verifying bit */
                     bits[rawIdx] = encoded[iPkg * 127 + idx];
                     rawIdx++;

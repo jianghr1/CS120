@@ -12,7 +12,7 @@ public class utils {
         int bitIndex = 0;
 
         for (byte b : bytes) {
-            for (int i = 7; i >=0; i--) {
+            for (int i = 7; i >= 0; i--) {
                 bits[bitIndex++] = ((b >> i) & 1) == 1;
             }
         }
@@ -28,7 +28,7 @@ public class utils {
                 b = b << 1;
                 b += bits[8 * i + j] ? 1 : 0;
             }
-            bytes[i] = (byte)b;
+            bytes[i] = (byte) b;
         }
 
         return bytes;
@@ -51,7 +51,7 @@ public class utils {
                 }
             }
         }
-        return  CRC;
+        return CRC;
     }
 
     public static byte[] readBinaryFile(String filePath) {
@@ -65,6 +65,7 @@ public class utils {
         }
         return fileBytes;
     }
+
     public static void writeBinaryFile(String filePath, byte[] data) {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             fos.write(data);
