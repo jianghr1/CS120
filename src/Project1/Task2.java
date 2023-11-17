@@ -5,9 +5,10 @@ import physics.base.CarrierGenerator;
 
 import java.util.ArrayList;
 
-public class Task2{
+public class Task2 {
     private final BaseAudioPhysics baseAudioPhysics;
     private final CarrierGenerator carrierGenerator;
+
     public Task2() {
         baseAudioPhysics = new BaseAudioPhysics();
         carrierGenerator = new CarrierGenerator(baseAudioPhysics.getSampleRate(), baseAudioPhysics.getBufferSize());

@@ -7,16 +7,11 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Listener implements  AsioDriverListener{
+public class Listener implements AsioDriverListener {
     private final LinkedBlockingQueue<float[]> txBuffer;
     private final LinkedBlockingQueue<float[]> rxBuffer;
     private Integer bufferSize;
     private float[] emptyBuffer;
-
-    private  void assignEmptyBuffer() {
-        this.emptyBuffer = new float[this.bufferSize];
-        Arrays.fill(this.emptyBuffer, 0);
-    }
 
     public Listener(LinkedBlockingQueue<float[]> txBuffer, LinkedBlockingQueue<float[]> rxBuffer, Integer bufferSize) {
         this.txBuffer = txBuffer;
@@ -24,9 +19,14 @@ public class Listener implements  AsioDriverListener{
         this.bufferSize = bufferSize;
     }
 
+    private void assignEmptyBuffer() {
+        this.emptyBuffer = new float[this.bufferSize];
+        Arrays.fill(this.emptyBuffer, 0);
+    }
+
     @Override
     public void sampleRateDidChange(double sampleRate) {
-        System.out.println("=== Changed Sample Rate to "+ sampleRate + " Hz ===");
+        System.out.println("=== Changed Sample Rate to " + sampleRate + " Hz ===");
     }
 
     @Override
@@ -41,20 +41,20 @@ public class Listener implements  AsioDriverListener{
 
     @Override
     public void bufferSizeChanged(int bufferSize) {
-        System.out.println("=== Changing Buffer Size to "+ bufferSize + " samples ===");
+        System.out.println("=== Changing Buffer Size to " + bufferSize + " samples ===");
         this.bufferSize = bufferSize;
         this.assignEmptyBuffer();
-        System.out.println("=== Changed Buffer Size to "+ bufferSize + " samples ===");
+        System.out.println("=== Changed Buffer Size to " + bufferSize + " samples ===");
     }
 
     @Override
     public void latenciesChanged(int inputLatency, int outputLatency) {
-        System.out.println("=== Changed Latency of input to "+ inputLatency + "; output to " + outputLatency + " ===");
+        System.out.println("=== Changed Latency of input to " + inputLatency + "; output to " + outputLatency + " ===");
     }
 
     @Override
     public void bufferSwitch(long sampleTime, long samplePosition, Set<AsioChannel> activeChannels) {
-        for (AsioChannel channel : activeChannels){
+        for (AsioChannel channel : activeChannels) {
             if (channel.isInput()) {
                 float[] input = new float[this.bufferSize];
                 channel.read(input);

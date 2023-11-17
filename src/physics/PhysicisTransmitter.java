@@ -1,14 +1,15 @@
 package physics;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Arrays;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class PhysicisTransmitter implements Runnable{
-    private final LinkedBlockingQueue<float []> txAudioBuffer;
-    private final LinkedBlockingQueue<byte []> txDataBuffer;
+public class PhysicisTransmitter implements Runnable {
+    private final LinkedBlockingQueue<float[]> txAudioBuffer;
+    private final LinkedBlockingQueue<byte[]> txDataBuffer;
     private final int bitWidth;
     private final Codec codec;
     private final int bufferSize;
+
     public PhysicisTransmitter(LinkedBlockingQueue<float[]> txAudioBuffer,
                                LinkedBlockingQueue<byte[]> txDataBuffer,
                                int bitWidth,
@@ -20,6 +21,7 @@ public class PhysicisTransmitter implements Runnable{
         this.codec = codec;
         this.bufferSize = bufferSize;
     }
+
     @Override
     public void run() {
         try {
@@ -35,7 +37,7 @@ public class PhysicisTransmitter implements Runnable{
             try {
                 byte[] data = txDataBuffer.take();
                 int crc = utils.getCRC(data);
-                byte[] frame = Arrays.copyOf(data, data.length+2);
+                byte[] frame = Arrays.copyOf(data, data.length + 2);
                 frame[frame.length - 2] = (byte) ((crc >> 8) & 0xFF);
                 frame[frame.length - 1] = (byte) (crc & 0xFF);
                 float[] modulated = codec.modulate(frame, bitWidth);

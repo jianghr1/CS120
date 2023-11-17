@@ -1,5 +1,4 @@
 package physics;
-import physics.base.CarrierGenerator;
 
 import java.io.IOException;
 import java.nio.file.Files;

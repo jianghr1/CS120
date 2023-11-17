@@ -1,25 +1,25 @@
 package physics;
 
+import com.synthbot.jasiohost.AsioChannel;
+import com.synthbot.jasiohost.AsioDriver;
+import physics.base.Listener;
+
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.List;
-import com.synthbot.jasiohost.AsioDriver;
-import com.synthbot.jasiohost.AsioChannel;
-import com.synthbot.jasiohost.AsioDriverInfo;
-import physics.base.Listener;
 
 public class Physicis {
-    private final LinkedBlockingQueue<float []> txAudioBuffer = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<float []> rxAudioBuffer = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<byte []> txDataBuffer = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<byte []> rxDataBuffer = new LinkedBlockingQueue<>();
-    private boolean started = false;
+    private final LinkedBlockingQueue<float[]> txAudioBuffer = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<float[]> rxAudioBuffer = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<byte[]> txDataBuffer = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<byte[]> rxDataBuffer = new LinkedBlockingQueue<>();
     private final AsioDriver asioDriver;
     private final Thread rxThread;
     private final Thread txThread;
+    private boolean started = false;
 
     public Physicis(int bitWidth, int frameSize, String codecType, boolean isHamming) throws IOException {
         List<String> driverNameList = AsioDriver.getDriverNames();
@@ -79,6 +79,7 @@ public class Physicis {
 
         started = true;
     }
+
     public void stop() {
         if (!started) {
             return;

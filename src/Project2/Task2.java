@@ -1,10 +1,9 @@
 package Project2;
 
-import physics.utils;
-
 import mac.Mac;
 import mac.MacFrame;
 import mac.MacFrameType;
+import physics.utils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,6 +12,7 @@ import java.util.random.RandomGenerator;
 public class Task2 {
     String GT_input;
     byte[] ori_data;
+
     public Task2() throws IOException, InterruptedException {
         ori_data = new byte[6250];
         RandomGenerator.getDefault().nextBytes(ori_data);
@@ -32,10 +32,10 @@ public class Task2 {
         if (transmitter) {
             long start = System.currentTimeMillis();
             for (int i = 0; i < numFrames; i++) {
-                byte[] data = Arrays.copyOfRange(ori_data, i * frameSize, (i+1) * frameSize);
-                MacFrame frame = new MacFrame(dest_addr, src_addr, MacFrameType.DATA, i == numFrames-1?MacFrame.FLAG_DATA_END:MacFrame.FLAG_PLAIN, 0, data);
+                byte[] data = Arrays.copyOfRange(ori_data, i * frameSize, (i + 1) * frameSize);
+                MacFrame frame = new MacFrame(dest_addr, src_addr, MacFrameType.DATA, i == numFrames - 1 ? MacFrame.FLAG_DATA_END : MacFrame.FLAG_PLAIN, 0, data);
                 if (!mac.write(frame)) {
-                    System.err.println("Send Package "+ i + "Failed. Exiting");
+                    System.err.println("Send Package " + i + "Failed. Exiting");
                     break;
                 }
             }

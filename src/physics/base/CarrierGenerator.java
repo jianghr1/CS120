@@ -28,12 +28,15 @@ public class CarrierGenerator {
     public void setBufferLength(int bufferLength) {
         this.bufferLength = bufferLength;
     }
+
     private float carrierSin(int baseFrequency, int step) {
         return (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
     }
+
     private float carrierSin(double baseFrequency, int step) {
         return (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
     }
+
     private float carrierFunc(int baseFrequency, String carrierType, int step) {
         float x;
         if (carrierType.compareToIgnoreCase("sin") == 0) {
@@ -41,16 +44,16 @@ public class CarrierGenerator {
         } else if (carrierType.compareToIgnoreCase("pulse") == 0) {
             x = (carrierSin(baseFrequency, step) >= 0) ? 1.0f : -1.0f;
         } else if (carrierType.compareToIgnoreCase("Proj1-Task2") == 0) {
-            x = carrierSin(baseFrequency, step) + carrierSin(baseFrequency*10, step);
+            x = carrierSin(baseFrequency, step) + carrierSin(baseFrequency * 10, step);
         } else if (carrierType.compareToIgnoreCase("odd-sin") == 0) {
-            x = carrierSin(baseFrequency * 1, step) +
-                carrierSin(baseFrequency * 5, step) +
-                carrierSin(baseFrequency * 11, step);
+            x = carrierSin(baseFrequency, step) +
+                    carrierSin(baseFrequency * 5, step) +
+                    carrierSin(baseFrequency * 11, step);
         } else if (carrierType.compareToIgnoreCase("chirp") == 0) {
             x = carrierSin(baseFrequency * (100 * step / this.sampleRate + 1), step);
         } else if (carrierType.compareToIgnoreCase("odd-chirp") == 0) {
             x = carrierSin(baseFrequency * (100 * step / this.sampleRate + 1), step) +
-                carrierSin(baseFrequency * 5 * (100 * step / this.sampleRate + 1), step);
+                    carrierSin(baseFrequency * 5 * (100 * step / this.sampleRate + 1), step);
         } else if (carrierType.compareToIgnoreCase("None") == 0) {
             x = .0f;
         } else if (carrierType.compareToIgnoreCase("Empty") == 0) {
@@ -60,14 +63,15 @@ public class CarrierGenerator {
         }
         return x;
     }
+
     public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, int bufferLength, float carrierLength) {
-        ArrayList<float[]> carriers = new ArrayList<> ();
-        int numBuffers = Math.ceilDiv((int)(carrierLength * this.sampleRate), bufferLength);
+        ArrayList<float[]> carriers = new ArrayList<>();
+        int numBuffers = Math.ceilDiv((int) (carrierLength * this.sampleRate), bufferLength);
         for (int i = 0; i < numBuffers; i++) {
             carriers.add(new float[bufferLength]);
         }
-        for (int i = 0; i < numBuffers * bufferLength; i++){
-            carriers.get(i / bufferLength)[i%bufferLength] = carrierFunc(baseFrequency, carrierType, i);
+        for (int i = 0; i < numBuffers * bufferLength; i++) {
+            carriers.get(i / bufferLength)[i % bufferLength] = carrierFunc(baseFrequency, carrierType, i);
         }
         return carriers;
     }
@@ -79,6 +83,7 @@ public class CarrierGenerator {
     public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType, int bufferLength) {
         return genCarrier(baseFrequency, carrierType, bufferLength, -1.0f);
     }
+
     public ArrayList<float[]> genCarrier(int baseFrequency, String carrierType) {
         return genCarrier(baseFrequency, carrierType, this.bufferLength);
     }
@@ -90,9 +95,10 @@ public class CarrierGenerator {
     public ArrayList<float[]> genSilence(float carrierLength) {
         return genCarrier(0, "Empty", carrierLength);
     }
+
     public float[] genCarrierArray(int baseFrequency, String carrierType, int carrierLength) {
         float[] carriers = new float[carrierLength];
-        for (int i = 0; i < carrierLength; i++){
+        for (int i = 0; i < carrierLength; i++) {
             carriers[i] = carrierFunc(baseFrequency, carrierType, i);
         }
         return carriers;

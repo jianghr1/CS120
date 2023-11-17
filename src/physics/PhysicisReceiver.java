@@ -1,28 +1,30 @@
 package physics;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.Arrays;
 
 enum PhysicalReceiverState {
     DETECT,
     DECODE,
     COOLDOWN
 }
-public class PhysicisReceiver implements Runnable{
-    private final LinkedBlockingQueue<float []> rxAudioBuffer;
-    private final LinkedBlockingQueue<byte []> rxDataBuffer;
+
+public class PhysicisReceiver implements Runnable {
+    private final LinkedBlockingQueue<float[]> rxAudioBuffer;
+    private final LinkedBlockingQueue<byte[]> rxDataBuffer;
     private final int bitWidth;
     private final Codec codec;
     private final int frameSize;
     private final boolean isHamming;
+
     public PhysicisReceiver(LinkedBlockingQueue<float[]> rxAudioBuffer,
-                               LinkedBlockingQueue<byte[]> rxDataBuffer,
-                               int bitWidth,
-                               Codec codec,
-                               int frameSize,
-                               boolean isHamming) {
+                            LinkedBlockingQueue<byte[]> rxDataBuffer,
+                            int bitWidth,
+                            Codec codec,
+                            int frameSize,
+                            boolean isHamming) {
         this.rxAudioBuffer = rxAudioBuffer;
         this.rxDataBuffer = rxDataBuffer;
         this.bitWidth = bitWidth;
@@ -30,6 +32,7 @@ public class PhysicisReceiver implements Runnable{
         this.frameSize = frameSize;
         this.isHamming = isHamming;
     }
+
     @Override
     public void run() {
         float[] preamble = codec.getPreamble();
@@ -44,8 +47,7 @@ public class PhysicisReceiver implements Runnable{
 
         int numSamples = bitWidth * frameSize * 8;
 
-        if (isHamming)
-        {
+        if (isHamming) {
             numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / 120f) * 127);
         }
         System.out.println(numSamples);
@@ -138,8 +140,7 @@ public class PhysicisReceiver implements Runnable{
         int crc = utils.getCRC(data);
         if (((crc >> 8) & 0xFF) == (decoded[frameSize - 2] & 0xFF) && (crc & 0xFF) == (decoded[frameSize - 1] & 0xFF)) {
             rxDataBuffer.put(data);
-        }
-        else {
+        } else {
             System.err.println("CRC error. Dropped");
 //            rxDataBuffer.put(data);
         }

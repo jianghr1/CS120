@@ -1,8 +1,5 @@
 package Project2;
 
-import Project2.Task1;
-import Project2.Task2;
-
 import java.io.IOException;
 import java.util.Scanner;
 

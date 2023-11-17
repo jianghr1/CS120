@@ -3,7 +3,7 @@ package Project0;
 import java.util.Scanner;
 
 public class Project0 {
-    public Project0 () {
+    public Project0() {
 
     }
 

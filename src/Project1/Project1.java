@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Project1 {
-    public Project1 () {
+    public Project1() {
 
     }
 
