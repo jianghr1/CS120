@@ -1,6 +1,9 @@
-package physics.base;
-import java.math.BigInteger;
-import java.util.Scanner;
+package physics;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class utils {
     public static boolean[] bytesToBits(byte[] bytes) {
@@ -31,28 +34,6 @@ public class utils {
         return bytes;
     }
 
-    public static byte[] addBytes(byte[] data1, byte[] data2) {
-        byte[] data3 = new byte[data1.length + data2.length];
-        System.arraycopy(data1, 0, data3, 0, data1.length);
-        System.arraycopy(data2, 0, data3, data1.length, data2.length);
-        return data3;
-    }
-
-    public static int getCRC(String data) {
-        data = data.replace(" ", "");
-        int len = data.length();
-        if (!(len % 2 == 0)) {
-            return 0;
-        }
-        int num = len / 2;
-        byte[] para = new byte[num];
-        for (int i = 0; i < num; i++) {
-            int value = Integer.valueOf(data.substring(i * 2, 2 * (i + 1)), 16);
-            para[i] = (byte) value;
-        }
-        return getCRC(para);
-    }
-
     public static int getCRC(byte[] bytes) {
         //CRC寄存器全为1
         int CRC = 0x0000ffff;
@@ -71,5 +52,24 @@ public class utils {
             }
         }
         return  CRC;
+    }
+
+    public static byte[] readBinaryFile(String filePath) {
+        File file = new File(filePath);
+        byte[] fileBytes = new byte[(int) file.length()];
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            fis.read(fileBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileBytes;
+    }
+    public static void writeBinaryFile(String filePath, byte[] data) {
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

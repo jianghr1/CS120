@@ -2,6 +2,7 @@ package physics;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Arrays;
+
 public class PhysicisTransmitter implements Runnable{
     private final LinkedBlockingQueue<float []> txAudioBuffer;
     private final LinkedBlockingQueue<byte []> txDataBuffer;
@@ -33,7 +34,10 @@ public class PhysicisTransmitter implements Runnable{
 
             try {
                 byte[] data = txDataBuffer.take();
-                byte[] frame = Arrays.copyOf(data, data.length);
+                int crc = utils.getCRC(data);
+                byte[] frame = Arrays.copyOf(data, data.length+2);
+                frame[frame.length - 2] = (byte) ((crc >> 8) & 0xFF);
+                frame[frame.length - 1] = (byte) (crc & 0xFF);
                 float[] modulated = codec.modulate(frame, bitWidth);
                 int chunkNums = (int) Math.ceil((double) modulated.length / bufferSize);
                 for (int i = 0; i < chunkNums - 1; i++) {

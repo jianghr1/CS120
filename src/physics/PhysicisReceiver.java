@@ -2,10 +2,8 @@ package physics;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Arrays;
-import java.util.random.RandomGenerator;
 
 enum PhysicalReceiverState {
     DETECT,
@@ -136,13 +134,14 @@ public class PhysicisReceiver implements Runnable{
     }
 
     private void validateAndPutData(byte[] decoded) throws InterruptedException {
-        byte[] data = Arrays.copyOf(decoded, frameSize);
-        rxDataBuffer.put(data);
-        // TBD: add CRC here
-//        byte[] data = Arrays.copyOf(decoded, frameSize - 2);
-//        long crc = CRC.calculateCRC(CRC.Parameters.CRC16, data);
-//        if (((crc >> 8) & 0xFF) == (decoded[frameSize - 2] & 0xFF) && (crc & 0xFF) == (decoded[frameSize - 1] & 0xFF)) {
+        byte[] data = Arrays.copyOf(decoded, frameSize - 2);
+        int crc = utils.getCRC(data);
+        if (((crc >> 8) & 0xFF) == (decoded[frameSize - 2] & 0xFF) && (crc & 0xFF) == (decoded[frameSize - 1] & 0xFF)) {
+            rxDataBuffer.put(data);
+        }
+        else {
+            System.err.println("CRC error. Dropped");
 //            rxDataBuffer.put(data);
-//        }
+        }
     }
 }

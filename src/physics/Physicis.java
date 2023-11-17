@@ -31,6 +31,9 @@ public class Physicis {
         double sampleRate = getSampleRate();
         Codec codec;
 
+        // 2 bits For CRC16
+        frameSize = frameSize + 2;
+
         if (codecType.compareToIgnoreCase("wire") == 0) {
             codec = new WireCodec(sampleRate, bufferSize, bitWidth, frameSize);
         } else {
