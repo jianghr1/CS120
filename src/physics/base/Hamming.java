@@ -1,5 +1,7 @@
 package physics.base;
 
+import physics.utils;
+
 import java.util.Arrays;
 
 public class Hamming {

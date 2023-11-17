@@ -1,6 +1,5 @@
 package physics;
 
-import physics.base.utils;
 import physics.base.Hamming;
 
 public class Codec {
