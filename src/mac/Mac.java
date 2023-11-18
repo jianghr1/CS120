@@ -70,7 +70,7 @@ public class Mac {
     }
 
     public void setMacState(MACState state) {
-        System.out.println("Set Mac State"+state.toString());
+//        System.out.println("Set Mac State"+state.toString());
         macState = state;
     }
 

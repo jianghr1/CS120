@@ -14,7 +14,7 @@ public class Task3 {
     byte[] ori_data;
 
     public Task3() throws IOException, InterruptedException {
-        ori_data = new byte[250];
+        ori_data = new byte[6250];
         RandomGenerator.getDefault().nextBytes(ori_data);
 //        ori_data = utils.readBinaryFile("INPUT.bin");
     }
@@ -24,7 +24,7 @@ public class Task3 {
 //        int dest_addr = (transmitter && receiver) ? 0 : 2;
         int src_addr = 1;
         int dest_addr = 2;
-        Mac mac = new Mac(transmitter ? src_addr : dest_addr);
+        Mac mac = new Mac(src_addr);
         int frameSize = mac.getFramePayloadSize();
         int numFrames = (int) Math.ceil((double) ori_data.length / frameSize);
 

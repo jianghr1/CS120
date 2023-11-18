@@ -90,8 +90,11 @@ public class MacReceiver implements Runnable {
     }
 
     private void ackHandler(MacFrame frame) throws InterruptedException {
+        System.out.println("Receive ACK from " + frame.src + "to " + frame.dest);
         if (frame.dest == addr) {
             txDispatchFrames.put(frame);
+            if (mac.getMacState() == MACState.FrameDetection)
+                mac.setMacState(MACState.Tx_waiting);
         }
     }
 
@@ -101,7 +104,6 @@ public class MacReceiver implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 byte[] phyData = phy.read(10);
-//                System.out.println("Pending Receive" + phyData.length);
                 if (phyData != null && phyData.length == frameSize) {
                     MacFrame frame = MacFrame.parseFrame(phyData);
                     switch (frame.type) {
@@ -112,8 +114,6 @@ public class MacReceiver implements Runnable {
                             ackHandler(frame);
                             break;
                     }
-                    if (mac.getMacState() == MACState.FrameDetection)
-                        mac.setMacState(MACState.Tx_waiting);
                 } else if (mac.isTxTimeOut()) {
                     if (mac.getMacState() == MACState.FrameDetection)
                         mac.setMacState(MACState.Tx_waiting);
