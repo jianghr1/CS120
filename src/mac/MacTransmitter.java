@@ -94,7 +94,9 @@ public class MacTransmitter implements Runnable {
                             reTransmitTimes = 0;
                             txResultBuffer.put(true);
                             txFrameIdx++;
+                            System.out.println("Transmit Success @ pack" + txFrameIdx);
                         } else {
+                            System.out.println("Transmit Fail @ pack" + txFrameIdx + " Retry:" + reTransmitTimes);
                             if (reTransmitTimes == maxRetransmitTimes - 1)
                             {
                                 reTransmitTimes = 0;
@@ -105,8 +107,10 @@ public class MacTransmitter implements Runnable {
                             }
                         }
                     } else {
+                        reTransmitTimes = 0;
                         txResultBuffer.put(true);
                         txFrameIdx++;
+                        System.out.println("Transmit Success @ pack" + txFrameIdx);
                     }
                 }
                 mac.setMacState(MACState.FrameDetection);

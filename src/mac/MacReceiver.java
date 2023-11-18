@@ -112,9 +112,11 @@ public class MacReceiver implements Runnable {
                             ackHandler(frame);
                             break;
                     }
-                    mac.setMacState(MACState.Tx_waiting);
+                    if (mac.getMacState() == MACState.FrameDetection)
+                        mac.setMacState(MACState.Tx_waiting);
                 } else if (mac.isTxTimeOut()) {
-                    mac.setMacState(MACState.Tx_waiting);
+                    if (mac.getMacState() == MACState.FrameDetection)
+                        mac.setMacState(MACState.Tx_waiting);
                 }
 
             } catch (InterruptedException e) {

@@ -14,7 +14,7 @@ public class Task3 {
     byte[] ori_data;
 
     public Task3() throws IOException, InterruptedException {
-        ori_data = new byte[6250];
+        ori_data = new byte[250];
         RandomGenerator.getDefault().nextBytes(ori_data);
 //        ori_data = utils.readBinaryFile("INPUT.bin");
     }
@@ -31,7 +31,6 @@ public class Task3 {
         mac.start();
 
         Thread.sleep(500);
-        System.out.println("!11111111111111111");
         if (transmitter) {
             long start = System.currentTimeMillis();
             for (int i = 0; i < numFrames; i++) {
@@ -39,7 +38,7 @@ public class Task3 {
                 MacFrame frame = new MacFrame(dest_addr, src_addr, MacFrameType.DATA, i == numFrames - 1 ? MacFrame.FLAG_DATA_END : MacFrame.FLAG_PLAIN, 0, data);
                 if (!mac.write(frame)) {
                     System.err.println("Send Package " + i + "Failed. Exiting");
-                    //break;
+                    break;
                 }
             }
             System.out.println("Transmit complete in " + (System.currentTimeMillis() - start) + "ms");

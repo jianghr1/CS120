@@ -66,7 +66,6 @@ public class Mac {
     }
 
     public MACState getMacState() {
-        System.out.println("Get Mac State: "+macState.toString());
         return macState;
     }
 
@@ -76,7 +75,6 @@ public class Mac {
     }
 
     public void resetTxTimeOutTimeStamp() {
-        System.out.println("Time Stamp reset!");
         txTimeOutTimeStamp = System.currentTimeMillis() + txTimeOutThreshold;
     }
 
