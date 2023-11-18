@@ -31,6 +31,7 @@ public class Task3 {
         mac.start();
 
         Thread.sleep(500);
+        System.out.println("!11111111111111111");
         if (transmitter) {
             long start = System.currentTimeMillis();
             for (int i = 0; i < numFrames; i++) {
@@ -44,17 +45,15 @@ public class Task3 {
             System.out.println("Transmit complete in " + (System.currentTimeMillis() - start) + "ms");
         }
 
-        if (receiver) {
-            byte[] rec_data = new byte[ori_data.length];
-            int frameIdx = 0;
-            MacFrame frame = mac.readNoWait();
-            while (frame != null && !frame.dataEnd()) {
-                System.arraycopy(frame.data, 0, rec_data, frameIdx * frameSize, frameSize);
-                frameIdx++;
-                frame = mac.read(1000);
-            }
-            utils.writeBinaryFile("OUTPUT.bin", rec_data);
+        byte[] rec_data = new byte[ori_data.length];
+        int frameIdx = 0;
+        MacFrame frame = mac.read(1000);
+        while (frame != null && !frame.dataEnd()) {
+            System.arraycopy(frame.data, 0, rec_data, frameIdx * frameSize, frameSize);
+            frameIdx++;
+            frame = mac.read(1000);
         }
+        utils.writeBinaryFile("OUTPUT.bin", rec_data);
         mac.stop();
     }
 }

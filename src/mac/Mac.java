@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Mac {
+
+    private MACState macState = MACState.FrameDetection;
+    private long txTimeOutTimeStamp = 0;
     private final Physicis phy;
     private final MacTransmitter macTransmitter;
     private final MacReceiver macReceiver;
     private final int addr;
     private final int frameSize;
-
+    private final int txTimeOutThreshold = 500;
 
     public Mac(int addr, int frameSize, long ACKTimeout, int maxRetransmitTimes) throws IOException {
         this.addr = addr;
@@ -21,9 +24,9 @@ public class Mac {
 
         LinkedBlockingQueue<MacFrame> txDispatchFrames = new LinkedBlockingQueue<>();
 
-        macTransmitter = new MacTransmitter(phy, txDispatchFrames, addr, ACKTimeout, maxRetransmitTimes);
+        macTransmitter = new MacTransmitter(this, phy, txDispatchFrames, addr, ACKTimeout, maxRetransmitTimes);
 
-        macReceiver = new MacReceiver(phy, txDispatchFrames, addr, this.frameSize + 2);
+        macReceiver = new MacReceiver(this, phy, txDispatchFrames, addr, this.frameSize + 2);
     }
 
     public Mac(int addr) throws IOException {
@@ -60,6 +63,25 @@ public class Mac {
     public boolean write(int dest, byte[] data) throws InterruptedException {
         MacFrame frame = new MacFrame(dest, addr, MacFrameType.DATA, MacFrame.FLAG_PLAIN, 0, data);
         return macTransmitter.write(frame);
+    }
+
+    public MACState getMacState() {
+        System.out.println("Get Mac State: "+macState.toString());
+        return macState;
+    }
+
+    public void setMacState(MACState state) {
+        System.out.println("Set Mac State"+state.toString());
+        macState = state;
+    }
+
+    public void resetTxTimeOutTimeStamp() {
+        System.out.println("Time Stamp reset!");
+        txTimeOutTimeStamp = System.currentTimeMillis() + txTimeOutThreshold;
+    }
+
+    public boolean isTxTimeOut() {
+        return System.currentTimeMillis() >= txTimeOutTimeStamp;
     }
 
     public int getFramePayloadSize() {
