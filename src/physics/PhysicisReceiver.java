@@ -12,12 +12,14 @@ enum PhysicalReceiverState {
 }
 
 public class PhysicisReceiver implements Runnable {
+    public PhysicalReceiverState state;
     private final LinkedBlockingQueue<float[]> rxAudioBuffer;
     private final LinkedBlockingQueue<byte[]> rxDataBuffer;
     private final int bitWidth;
     private final Codec codec;
     private final int frameSize;
     private final boolean isHamming;
+    private float power;
 
     public PhysicisReceiver(LinkedBlockingQueue<float[]> rxAudioBuffer,
                             LinkedBlockingQueue<byte[]> rxDataBuffer,
@@ -33,11 +35,15 @@ public class PhysicisReceiver implements Runnable {
         this.isHamming = isHamming;
     }
 
+    public boolean isIdle() {
+        return power < 1.0f;
+    }
+
     @Override
     public void run() {
         float[] preamble = codec.getPreamble();
-        PhysicalReceiverState state = PhysicalReceiverState.DETECT;
-        float power = 0f;
+        state = PhysicalReceiverState.DETECT;
+        power = 0f;
         int startIndex = 0;
         Queue<Float> syncQueue = new LinkedList<>();
         for (int i = 0; i < preamble.length; i++) {

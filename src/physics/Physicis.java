@@ -17,6 +17,8 @@ public class Physicis {
     private final LinkedBlockingQueue<byte[]> txDataBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<byte[]> rxDataBuffer = new LinkedBlockingQueue<>();
     private final AsioDriver asioDriver;
+    private final PhysicisReceiver receiver;
+    private final PhysicisTransmitter transmitter;
     private final Thread rxThread;
     private final Thread txThread;
     private boolean started = false;
@@ -42,8 +44,8 @@ public class Physicis {
 
         codec.isHamming = isHamming;
 
-        PhysicisReceiver receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, codec, frameSize, isHamming);
-        PhysicisTransmitter transmitter = new PhysicisTransmitter(txAudioBuffer, txDataBuffer, bitWidth, codec, getBufferSize());
+        receiver = new PhysicisReceiver(rxAudioBuffer, rxDataBuffer, bitWidth, codec, frameSize, isHamming);
+        transmitter = new PhysicisTransmitter(txAudioBuffer, txDataBuffer, bitWidth, codec, getBufferSize());
 
         rxThread = new Thread(receiver);
         txThread = new Thread(transmitter);
@@ -55,6 +57,14 @@ public class Physicis {
 
     public double getSampleRate() {
         return asioDriver.getSampleRate();
+    }
+
+    public boolean isIdle() {
+        return receiver.isIdle() && txAudioBuffer.isEmpty();
+    }
+
+    public boolean getState() {
+        return receiver.state == PhysicalReceiverState.DETECT;
     }
 
     public void start() {

@@ -62,13 +62,18 @@ public class MacTransmitter implements Runnable {
         int txFrameIdx = 0;
         while (!Thread.currentThread().isInterrupted()) {
             try {
+                if (MacReceiver.macState != MacReceiver.MACState.Tx) {
+                    Thread.sleep(5);
+                    continue;
+                }
                 MacFrame txFrame = txFrameBuffer.poll();
                 if (txFrame != null) {
                     System.out.println("transmitting" + txFrameIdx + "from" + txFrame.src + "to" + txFrame.dest);
                     txFrame.idx = txFrameIdx % 8;
-                    // CSMA here
                     byte[] txData = txFrame.toBytes();
+                    // CSMA here
                     phy.write(txData);
+
                     if (txFrame.requireACK()) {
                         boolean success = false;
                         for (int i = 0; i < maxRetransmitTimes; i++) {

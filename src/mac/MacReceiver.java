@@ -6,6 +6,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class MacReceiver implements Runnable {
+    enum MACState {
+        FrameDetection, Tx, Rx,
+        Tx_waiting//想要发送，但是先听一下频道
+    }
+    public static MACState macState;
+    public long last_time = 10000;
     private final Physicis phy;
     private final LinkedBlockingQueue<MacFrame> rxFrameBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MacFrame> txDispatchFrames;
@@ -15,7 +21,6 @@ public class MacReceiver implements Runnable {
     private final byte[] ACKData;
     private boolean started = false;
     private int rxFrameIdx;
-
     public MacReceiver(Physicis phy, LinkedBlockingQueue<MacFrame> txDispatchFrames, int addr, int frameSize) {
         this.phy = phy;
         this.txDispatchFrames = txDispatchFrames;
@@ -100,23 +105,41 @@ public class MacReceiver implements Runnable {
             try {
                 byte[] phyData = phy.read();
 //                System.out.println("Pending Receive" + phyData.length);
-                if (phyData != null && phyData.length == frameSize) {
-                    MacFrame frame = MacFrame.parseFrame(phyData);
-                    switch (frame.type) {
-                        case DATA -> {
-                            dataHandler(frame);
+                switch (macState) {
+                    case FrameDetection:
+                        if (phyData != null && phyData.length == frameSize) {
+                            MacFrame frame = MacFrame.parseFrame(phyData);
+                            switch (frame.type) {
+                                case DATA :
+                                    dataHandler(frame);
+                                    macState = MACState.Rx;
+                                    break;
+                                case ACK :
+                                    ackHandler(frame);
+                                    macState = MACState.Tx_waiting;
+                                    break;
+                            }
                         }
-                        case ACK -> {
-                            ackHandler(frame);
+                        long current_time = System.currentTimeMillis();
+                        if (current_time - last_time > 500)
+                            macState = MACState.Tx_waiting;
+                        break;
+                    case Tx_waiting:
+                        if (phy.isIdle())
+                            macState=MACState.Tx;
+                        break;
+                    case Tx:
+                        if(phy.sendComplete()) {
+                            macState = MACState.FrameDetection;
+                            last_time = System.currentTimeMillis();
                         }
-                        case RTS -> {
-                            //TBD1
-                        }
-                        case CTS -> {
-                            //TBD2
-                        }
-                    }
+                        break;
+                    case Rx:
+                        if (phy.getState())
+                            macState = MACState.FrameDetection;
+                        break;
                 }
+
             } catch (InterruptedException e) {
                 return;
             }
@@ -125,6 +148,9 @@ public class MacReceiver implements Runnable {
 
     private void sendACK(int dest, int idx) throws InterruptedException {
         phy.write(new MacFrame(dest, addr, MacFrameType.ACK, MacFrame.FLAG_PLAIN, idx, ACKData).toBytes());
+    }
+    private void sendRTS(int dest, int idx) throws InterruptedException {
+        phy.write(new MacFrame(dest, addr, MacFrameType.RTS, MacFrame.FLAG_PLAIN, idx, ACKData).toBytes());
     }
 
 }
