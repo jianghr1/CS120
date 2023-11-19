@@ -61,7 +61,7 @@ public class Hamming {
             }
 
             if (errorIdx != 0) {
-                System.err.println("[Warn] Detected Err Bit on " + errorIdx + "Bits:" + Arrays.toString(verifyBits));
+//                System.err.println("[Warn] Detected Err Bit on " + errorIdx + "Bits:" + Arrays.toString(verifyBits));
                 encoded[iPkg * 127 + errorIdx - 1] ^= true;
             }
 

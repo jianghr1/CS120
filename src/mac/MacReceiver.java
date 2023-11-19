@@ -86,6 +86,8 @@ public class MacReceiver implements Runnable {
             if (frame.requireACK()) {
                 sendACK(frame.src, frame.idx);
             }
+            if (mac.getMacState() == MACState.FrameDetection)
+                mac.setMacState(MACState.Tx_waiting);
         }
     }
 
@@ -93,6 +95,7 @@ public class MacReceiver implements Runnable {
         System.out.println("Receive ACK from " + frame.src + "to " + frame.dest);
         if (frame.dest == addr) {
             txDispatchFrames.put(frame);
+        } else {
             if (mac.getMacState() == MACState.FrameDetection)
                 mac.setMacState(MACState.Tx_waiting);
         }
