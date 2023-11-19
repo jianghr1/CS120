@@ -4,6 +4,7 @@ import physics.Physicis;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.random.RandomGenerator;
 
 public class Mac {
 
@@ -14,7 +15,7 @@ public class Mac {
     private final MacReceiver macReceiver;
     private final int addr;
     private final int frameSize;
-    private final int txTimeOutThreshold = 500;
+    private final int txTimeOutThreshold = 300;
 
     public Mac(int addr, int frameSize, long ACKTimeout, int maxRetransmitTimes) throws IOException {
         this.addr = addr;
@@ -30,7 +31,7 @@ public class Mac {
     }
 
     public Mac(int addr) throws IOException {
-        this(addr, 50, 500, 5);
+        this(addr, 50, 250, 5);
     }
 
     public void start() {
@@ -75,7 +76,7 @@ public class Mac {
     }
 
     public void resetTxTimeOutTimeStamp() {
-        txTimeOutTimeStamp = System.currentTimeMillis() + txTimeOutThreshold;
+        txTimeOutTimeStamp = System.currentTimeMillis() + (long) 100 * RandomGenerator.getDefault().nextInt(1,6);
     }
 
     public boolean isTxTimeOut() {
