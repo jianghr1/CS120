@@ -14,7 +14,7 @@ public class Project2 {
         System.out.println("Going to show Task3. Enter to start");
         if (scanner.hasNextLine()) {
             scanner.nextLine();
-            task3.run(true, true);
+            task3.run(true);
         }
         scanner.close();
     }

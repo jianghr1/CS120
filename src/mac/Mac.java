@@ -15,7 +15,7 @@ public class Mac {
     private final MacReceiver macReceiver;
     private final int addr;
     private final int frameSize;
-    private final int txTimeOutThreshold = 300;
+    private final int txTimeOutThreshold = 350;
 
     public Mac(int addr, int frameSize, long ACKTimeout, int maxRetransmitTimes) throws IOException {
         this.addr = addr;
@@ -76,7 +76,7 @@ public class Mac {
     }
 
     public void resetTxTimeOutTimeStamp() {
-        txTimeOutTimeStamp = System.currentTimeMillis() + (long) 100 * RandomGenerator.getDefault().nextInt(1,6);
+        txTimeOutTimeStamp = System.currentTimeMillis() + (long) txTimeOutThreshold;
     }
 
     public boolean isTxTimeOut() {
