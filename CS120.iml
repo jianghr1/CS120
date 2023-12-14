@@ -8,5 +8,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JAsioHost" level="project" />
+    <orderEntry type="library" name="pcap4j.core" level="project" />
+    <orderEntry type="library" name="slf4j.simple" level="project" />
+    <orderEntry type="library" name="ch.qos.logback.core" level="project" />
+    <orderEntry type="library" name="ch.qos.logback.classic" level="project" />
   </component>
 </module>
