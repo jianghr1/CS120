@@ -18,6 +18,7 @@ public class task1_athernode {
         Mac mac = new Mac(1);
 
         try {
+            Thread.sleep(1000);
             mac.start();
             Thread.sleep(1000);
             for (int i = 0; i < 10; i++) {
