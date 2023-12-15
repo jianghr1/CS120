@@ -32,6 +32,8 @@ public class WireCodec extends Codec {
             System.err.println("Fail to load preamble");
             throw new IOException("Fail to load preamble: " + e.getMessage());
         }
+
+        isHamming = false;
     }
 
 }

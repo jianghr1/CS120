@@ -67,7 +67,7 @@ public class MacTransmitter implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (mac.getMacState() != MACState.Tx_waiting) {
-                    Thread.sleep(5);
+                    Thread.sleep(1);
                     continue;
                 }
                 if (reTransmitTimes == 0) {

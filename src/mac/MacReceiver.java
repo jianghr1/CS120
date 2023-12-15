@@ -106,7 +106,7 @@ public class MacReceiver implements Runnable {
         rxFrameIdx = -1;
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                byte[] phyData = phy.read(10);
+                byte[] phyData = phy.read(1);
                 if (phyData != null && phyData.length == frameSize) {
                     MacFrame frame = MacFrame.parseFrame(phyData);
                     switch (frame.type) {

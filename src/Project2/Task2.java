@@ -14,7 +14,7 @@ public class Task2 {
     byte[] ori_data;
 
     public Task2() throws IOException, InterruptedException {
-        ori_data = new byte[6250];
+        ori_data = new byte[600];
         RandomGenerator.getDefault().nextBytes(ori_data);
 //        ori_data = utils.readBinaryFile("INPUT.bin");
     }
@@ -34,10 +34,13 @@ public class Task2 {
             for (int i = 0; i < numFrames; i++) {
                 byte[] data = Arrays.copyOfRange(ori_data, i * frameSize, (i + 1) * frameSize);
                 MacFrame frame = new MacFrame(dest_addr, src_addr, MacFrameType.DATA, i == numFrames - 1 ? MacFrame.FLAG_DATA_END : MacFrame.FLAG_PLAIN, 0, data);
+                long time = System.nanoTime();
                 if (!mac.write(frame)) {
                     System.err.println("Send Package " + i + "Failed. Exiting");
                     break;
                 }
+                double ping = (System.nanoTime() - time) / 1000000.0;
+                System.out.println("Ping " + ping + "ms");
             }
             System.out.println("Transmit complete in " + (System.currentTimeMillis() - start) + "ms");
         }
@@ -45,7 +48,7 @@ public class Task2 {
         if (receiver) {
             byte[] rec_data = new byte[ori_data.length];
             int frameIdx = 0;
-            MacFrame frame = mac.read();
+            MacFrame frame = mac.read(50);
             while (frame != null && !frame.dataEnd()) {
                 System.arraycopy(frame.data, 0, rec_data, frameIdx * frameSize, frameSize);
                 frameIdx++;

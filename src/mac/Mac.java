@@ -15,13 +15,13 @@ public class Mac {
     private final MacReceiver macReceiver;
     private final int addr;
     private final int frameSize;
-    private final int txTimeOutThreshold = 350;
+    public int txTimeOutThreshold = 0;
 
     public Mac(int addr, int frameSize, long ACKTimeout, int maxRetransmitTimes) throws IOException {
         this.addr = addr;
         this.frameSize = frameSize;
 
-        phy = new Physicis(4, this.frameSize + 2, "wire", true);
+        phy = new Physicis(6, this.frameSize + 2, "wire", false);
 
         LinkedBlockingQueue<MacFrame> txDispatchFrames = new LinkedBlockingQueue<>();
 
@@ -31,7 +31,7 @@ public class Mac {
     }
 
     public Mac(int addr) throws IOException {
-        this(addr, 50, 250, 15);
+        this(addr, 20, 250, 0);
     }
 
     public void start() {
