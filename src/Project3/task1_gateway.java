@@ -32,5 +32,6 @@ public class task1_gateway {
             mac.stop();
             throw new RuntimeException(e);
         }
+        mac.stop();
     }
 }
