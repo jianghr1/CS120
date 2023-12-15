@@ -12,5 +12,6 @@
     <orderEntry type="library" name="slf4j.simple" level="project" />
     <orderEntry type="library" name="ch.qos.logback.core" level="project" />
     <orderEntry type="library" name="ch.qos.logback.classic" level="project" />
+    <orderEntry type="library" name="pcap4j.packetfactory.static" level="project" />
   </component>
 </module>
