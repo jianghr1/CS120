@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MacReceiver implements Runnable {
     private final Mac mac;
-    public long last_time = 10000;
     private final Physicis phy;
     private final LinkedBlockingQueue<MacFrame> rxFrameBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MacFrame> txDispatchFrames;

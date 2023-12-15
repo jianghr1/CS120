@@ -31,7 +31,7 @@ public class Mac {
     }
 
     public Mac(int addr) throws IOException {
-        this(addr, 20, 250, 0);
+        this(addr, 20, 250, 1);
     }
 
     public void start() {
