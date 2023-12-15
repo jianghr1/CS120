@@ -19,6 +19,7 @@ public class task1_athernode {
 
         try {
             mac.start();
+            Thread.sleep(1000);
             for (int i = 0; i < 10; i++) {
                 byte[] data = new byte[20];
                 System.arraycopy(srcIP, 0, data, 0, 4);
@@ -30,21 +31,21 @@ public class task1_athernode {
                 MacFrame frame = new MacFrame(0, 1, MacFrameType.DATA, MacFrame.FLAG_PLAIN, data);
                 long time = System.nanoTime();
                 mac.write(frame);
-                MacFrame replyFrame = mac.read(5000);
+                MacFrame replyFrame = mac.read(1000);
                 if (replyFrame == null)
                 {
-                    mac.stop();
-                    break;
+                    System.out.println("Lost");
+                } else {
+                    byte[] replyData = replyFrame.data;
+                    byte[] replySrcIP = Arrays.copyOf(replyData, 4);
+                    byte[] replyDstIP = Arrays.copyOfRange(replyData, 4, 8);
+                    byte[] replyPayload = Arrays.copyOfRange(replyData, 10, 20);
+                    System.out.println("Receive ICMP Echo Reply from ip " + InetAddress.getByAddress(replySrcIP));
+                    System.out.println("Destination ip " + InetAddress.getByAddress(replyDstIP));
+                    System.out.println("Raw payload " + Arrays.toString(replyPayload));
+                    double ping = (System.nanoTime() - time) / 1000000.0;
+                    System.out.println("Ping " + ping + "ms");
                 }
-                byte[] replyData = replyFrame.data;
-                byte[] replySrcIP = Arrays.copyOf(replyData, 4);
-                byte[] replyDstIP = Arrays.copyOfRange(replyData, 4, 8);
-                byte[] replyPayload = Arrays.copyOfRange(replyData, 10, 10);
-                System.out.println("Receive ICMP Echo Reply from ip " + InetAddress.getByAddress(replySrcIP));
-                System.out.println("Destination ip " + InetAddress.getByAddress(replyDstIP));
-                System.out.println("Raw payload " + Arrays.toString(replyPayload));
-                double ping = (System.nanoTime() - time) / 1000000.0;
-                System.out.println("Ping " + ping + "ms");
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {

@@ -80,7 +80,9 @@ public class MacReceiver implements Runnable {
                 rxFrameBuffer.put(frame);
                 System.out.println("Receive" + rxFrameIdx + "from" + frame.src + "to" + frame.dest + ", Ack: " + frame.requireACK());
             } else {
-                System.err.println("UnRecognized Package");
+                rxFrameBuffer.put(frame);
+                rxFrameIdx = frame.idx;
+                System.err.println("Frame Idx dosen't match! Lost frame?");
             }
             if (frame.requireACK()) {
                 sendACK(frame.src, frame.idx);
