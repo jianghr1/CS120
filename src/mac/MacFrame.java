@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class MacFrame {
     public static final int FLAG_PLAIN = 0;
     public static final int FLAG_DATA_END = 1;
+    public static final int FLAG_REQUIRE_ACK = 2;
 
     public final int dest;
     public final MacFrameType type;
@@ -26,6 +27,17 @@ public class MacFrame {
         this.idx = idx;
     }
 
+    public MacFrame(int dest, int src, MacFrameType type, int flags, byte[] data) {
+        assert dest < 0xF;
+        assert src < 0xF;
+        assert flags < 0x3;
+        this.dest = dest;
+        this.src = src;
+        this.type = type;
+        this.flags = flags;
+        this.data = data;
+        this.idx = 0;
+    }
     public static MacFrame parseFrame(byte[] frame) {
         int dest = frame[0] >> 4;
         int src = frame[0] & 0xF;
@@ -37,7 +49,7 @@ public class MacFrame {
     }
 
     public boolean requireACK() {
-        return type == MacFrameType.DATA;
+        return (flags & FLAG_REQUIRE_ACK) != 0;
     }
 
     public boolean dataEnd() {
