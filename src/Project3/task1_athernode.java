@@ -18,6 +18,7 @@ public class task1_athernode {
         Mac mac = new Mac(1);
 
         try {
+            Thread.sleep(1000);
             mac.start();
             for (int i = 0; i < 10; i++) {
                 byte[] data = new byte[20];
