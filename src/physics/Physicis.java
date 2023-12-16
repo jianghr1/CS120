@@ -4,6 +4,7 @@ import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;
 import physics.base.Listener;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class Physicis {
+public class Physicis implements Closeable {
     private final LinkedBlockingQueue<float[]> txAudioBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<float[]> rxAudioBuffer = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<byte[]> txDataBuffer = new LinkedBlockingQueue<>();
@@ -134,4 +135,8 @@ public class Physicis {
         return txAudioBuffer.isEmpty() && txDataBuffer.isEmpty();
     }
 
+    @Override
+    public void close() throws IOException {
+        stop();
+    }
 }

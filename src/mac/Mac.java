@@ -2,11 +2,12 @@ package mac;
 
 import physics.Physicis;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.random.RandomGenerator;
 
-public class Mac {
+public class Mac implements Closeable {
 
     private MACState macState = MACState.FrameDetection;
     private long txTimeOutTimeStamp = 0;
@@ -85,5 +86,12 @@ public class Mac {
 
     public int getFramePayloadSize() {
         return frameSize;
+    }
+
+    @Override
+    public void close() throws IOException {
+        macReceiver.stop();
+        macTransmitter.stop();
+        phy.stop();
     }
 }
