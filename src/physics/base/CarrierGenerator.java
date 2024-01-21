@@ -37,12 +37,21 @@ public class CarrierGenerator {
         return (float) Math.sin(step / this.sampleRate * baseFrequency * 2 * Math.PI);
     }
 
+    private float carrierCos(int baseFrequency, int step) {
+        return (float) Math.cos(step / this.sampleRate * baseFrequency * 2 * Math.PI);
+    }
+
+    private float carrierCos(double baseFrequency, int step) {
+        return (float) Math.cos(step / this.sampleRate * baseFrequency * 2 * Math.PI);
+    }
     private float carrierFunc(int baseFrequency, String carrierType, int step) {
         float x;
         if (carrierType.compareToIgnoreCase("sin") == 0) {
             x = carrierSin(baseFrequency, step);
         } else if (carrierType.compareToIgnoreCase("pulse") == 0) {
             x = (carrierSin(baseFrequency, step) >= 0) ? 1.0f : -1.0f;
+        } else if (carrierType.compareToIgnoreCase("cos") == 0) {
+            x = carrierCos(baseFrequency, step);
         } else if (carrierType.compareToIgnoreCase("Proj1-Task2") == 0) {
             x = carrierSin(baseFrequency, step) + carrierSin(baseFrequency * 10, step);
         } else if (carrierType.compareToIgnoreCase("odd-sin") == 0) {

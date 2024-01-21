@@ -21,7 +21,7 @@ public class FEC {
 //        Path path = Paths.get("INPUT.txt");
 //        char[] input_data = Files.readString(path).toCharArray();
 //        GT_input = String.valueOf(input_data);
-        byte[] ori_data = new byte[frameSize * 23];
+        byte[] ori_data = new byte[frameSize * 5];
         Arrays.fill(ori_data, (byte) 0);
 //        for (int i = 0; i < input_data.length; i++) {
 //            ori_data[i/8] <<= 1;

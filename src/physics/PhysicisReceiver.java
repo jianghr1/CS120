@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static physics.utils.divide;
+import static physics.utils.multiply;
+
 enum PhysicalReceiverState {
     DETECT,
     DECODE,
@@ -53,10 +56,10 @@ public class PhysicisReceiver implements Runnable {
         }
         float syncPowerLocalMax = 0f;
 
-        int numSamples = bitWidth * frameSize * 8;
+        int numSamples = multiply(multiply(bitWidth , frameSize) , 8);
 
         if (isHamming) {
-            numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / Hamming.hammingOri) * Hamming.hammingAdu);
+            numSamples = multiply(bitWidth , multiply((int) (Math.ceil(divide(multiply(frameSize, 8) , Hamming.hammingOri))) , Hamming.hammingAdu));
         }
         System.out.println(numSamples);
         float[] decode = new float[numSamples];
@@ -80,7 +83,7 @@ public class PhysicisReceiver implements Runnable {
 
                 while (dataIndex < totalCount) {
                     float currentSample = data[dataIndex - lastCount];
-                    power = power * 63 / 64 + currentSample * currentSample / 64;
+                    power = power - divide(power, 64) + divide(multiply(currentSample,currentSample), 64);
 
                     if (state == PhysicalReceiverState.DETECT) {
                         syncQueue.poll();
@@ -88,12 +91,12 @@ public class PhysicisReceiver implements Runnable {
                         int i = 0;
                         float syncPower = 0;
                         for (float sample : syncQueue) {
-                            syncPower += sample * preamble[i++];
+                            syncPower += multiply(sample , preamble[i++]);
                         }
                         if (syncPower > power && syncPower > syncPowerLocalMax && syncPower > syncPowerThreshold) {
                             syncPowerLocalMax = syncPower;
                             startIndex = dataIndex + 1;
-                        } else if (dataIndex - startIndex + 1 > preamble.length / 2 && startIndex != 0) {
+                        } else if (dataIndex - startIndex + 1 > divide(preamble.length , 2) && startIndex != 0) {
                             syncPowerLocalMax = 0;
                             syncQueue.clear();
                             for (int j = 0; j < preamble.length; j++) {

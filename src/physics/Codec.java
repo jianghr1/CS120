@@ -2,6 +2,9 @@ package physics;
 
 import physics.base.Hamming;
 
+import static physics.utils.divide;
+import static physics.utils.multiply;
+
 public class Codec {
 
     protected static float[] carrier;
@@ -19,7 +22,7 @@ public class Codec {
     }
 
     public float[] modulateBit(boolean[] frame, int bitWidth) {
-        int waveLength = preamble.length + frame.length * bitWidth;
+        int waveLength = preamble.length + multiply(frame.length , bitWidth);
         float[] wave = new float[waveLength];
 
         int waveIndex = 0;
@@ -45,7 +48,7 @@ public class Codec {
 
     public static float[] modulateByte(byte[] frame, int bitWidth) {
 
-        int waveLength = preamble.length + frame.length * 8 * bitWidth;
+        int waveLength = preamble.length + multiply(multiply(frame.length , 8) , bitWidth);
         float[] wave = new float[waveLength];
 
         int waveIndex = 0;
@@ -87,14 +90,14 @@ public class Codec {
     public boolean[] demodulateBit(float[] data, int bitWidth) {
         float[] corr = new float[data.length];
         for (int i = 0; i < data.length; i++) {
-            corr[i] = data[i] * carrier[i];
+            corr[i] = multiply(data[i] , carrier[i]);
         }
 
-        boolean[] frame = new boolean[data.length / bitWidth];
+        boolean[] frame = new boolean[divide(data.length , bitWidth)];
         for (int i = 0; i < frame.length; i++) {
             float power = 0;
             for (int k = 1; k < bitWidth - 1; k++) {
-                power += corr[bitWidth * i + k];
+                power += corr[multiply(bitWidth , i) + k];
             }
             frame[i] = power > 0;
         }
@@ -106,17 +109,17 @@ public class Codec {
     public static byte[] demodulateByte(float[] data, int bitWidth) {
         float[] corr = new float[data.length];
         for (int i = 0; i < data.length; i++) {
-            corr[i] = data[i] * carrier[i];
+            corr[i] = multiply(data[i] , carrier[i]);
         }
 
-        byte[] frame = new byte[data.length / 8 / bitWidth];
+        byte[] frame = new byte[divide(divide(data.length , 8) , bitWidth)];
         for (int i = 0; i < frame.length; i++) {
             int b = 0;
             for (int j = 0; j < 8; j++) {
                 b = b << 1;
                 float power = 0;
                 for (int k = 1; k < bitWidth - 1; k++) {
-                    power += corr[bitWidth * (8 * i + j) + k];
+                    power += corr[multiply(bitWidth , (multiply(8 , i)) + j) + k];
                 }
                 if (power > 0) {
                     b += 1;
