@@ -58,7 +58,8 @@ public class task1_gateway {
                     Pattern pattern = Pattern.compile("\\[([0-9\\.]+)\\]");
                     Matcher matcher = pattern.matcher(s);
                     if (matcher.find()) {
-                        replyData = matcher.group(1).getBytes(StandardCharsets.US_ASCII);
+                        byte[] tmp = matcher.group(1).getBytes(StandardCharsets.US_ASCII);
+                        System.arraycopy(tmp, 0, replyData, 0, tmp.length);
                         break;
                     }
                 }

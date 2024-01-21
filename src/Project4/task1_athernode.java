@@ -31,8 +31,7 @@ public class task1_athernode {
                     System.out.println("Lost");
                 } else {
                     byte[] replyData = replyFrame.data;
-                    byte[] replyDstIP = Arrays.copyOf(replyData, 4);
-                    String domain = new String(data, StandardCharsets.US_ASCII);
+                    String domain = new String(replyData, StandardCharsets.US_ASCII);
                     StringBuilder nonZeroChars = new StringBuilder();
                     for (int j = 0; j < domain.length(); j++) {
                         char c = domain.charAt(j);
