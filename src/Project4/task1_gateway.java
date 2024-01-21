@@ -34,7 +34,17 @@ public class task1_gateway {
                 byte[] data = mac.read().data;
                 System.out.println(Arrays.toString(data));
                 String domain = new String(data, StandardCharsets.US_ASCII);
-                Process process = Runtime.getRuntime().exec("ping " + domain);
+
+                StringBuilder nonZeroChars = new StringBuilder();
+                for (int i = 0; i < domain_.length(); i++) {
+                    char c = domain_.charAt(i);
+                    if (c == 0X00) {
+                        break;
+                    }
+                    else
+                        nonZeroChars.append(c);
+                }
+                Process process = Runtime.getRuntime().exec("ping " + nonZeroChars);
 
                 BufferedReader inputStream = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));

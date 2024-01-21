@@ -33,7 +33,16 @@ public class task1_athernode {
                     byte[] replyData = replyFrame.data;
                     byte[] replyDstIP = Arrays.copyOf(replyData, 4);
                     String domain = new String(data, StandardCharsets.US_ASCII);
-                    System.out.println("Destination ip " + domain);
+                    StringBuilder nonZeroChars = new StringBuilder();
+                    for (int j = 0; j < domain.length(); j++) {
+                        char c = domain.charAt(j);
+                        if (c == 0X00) {
+                            break;
+                        }
+                        else
+                            nonZeroChars.append(c);
+                    }
+                    System.out.println("Destination ip " + nonZeroChars);
                     double ping = (System.nanoTime() - time) / 1000000.0;
                     System.out.println("DNS query finished " + ping + "ms");
                 }
