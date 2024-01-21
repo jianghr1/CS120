@@ -1,5 +1,7 @@
 package physics;
 
+import physics.base.Hamming;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -54,7 +56,7 @@ public class PhysicisReceiver implements Runnable {
         int numSamples = bitWidth * frameSize * 8;
 
         if (isHamming) {
-            numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / 120f) * 127);
+            numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / Hamming.hammingOri) * Hamming.hammingAdu);
         }
         System.out.println(numSamples);
         float[] decode = new float[numSamples];
@@ -65,7 +67,7 @@ public class PhysicisReceiver implements Runnable {
 
         float[] previousData = null;
 
-        float syncPowerThreshold = 0.08f;
+        float syncPowerThreshold = 0.8f;
 
         while (!Thread.currentThread().isInterrupted()) {
             try {
@@ -148,7 +150,7 @@ public class PhysicisReceiver implements Runnable {
             rxDataBuffer.put(data);
         } else {
             System.err.println("CRC error. Dropped");
-//            rxDataBuffer.put(data);
+            rxDataBuffer.put(data);
         }
     }
 }

@@ -5,26 +5,30 @@ import physics.utils;
 import java.util.Arrays;
 
 public class Hamming {
+    public static int hammingOri = 57;
+    static public int hammingAdu = 63;
+    static public int hammingBit = 6;
     public static boolean[] encodeHamming(byte[] raw) {
 
         boolean[] bits = utils.bytesToBits(raw);
+        System.out.println(bits.length);
 
-        int numPackages = (int) Math.ceil(bits.length / 120f);
+        int numPackages = (int) Math.ceil((double) bits.length / hammingOri);
 
-        boolean[] encoded = new boolean[numPackages * 127];
+        boolean[] encoded = new boolean[numPackages * hammingAdu];
 
         int rawIdx = 0;
 
         for (int iPkg = 0; iPkg < numPackages; iPkg++) {
 
-            for (int idx = 0; idx < 127; idx++) {
+            for (int idx = 0; idx < hammingAdu; idx++) {
                 if (((idx + 1) & idx) != 0) {
                     /* not verifying bit */
-                    encoded[iPkg * 127 + idx] = rawIdx < bits.length && bits[rawIdx];
+                    encoded[iPkg * hammingAdu + idx] = rawIdx < bits.length && bits[rawIdx];
 
-                    for (int t = 0; t < 7; t++) {
+                    for (int t = 0; t < hammingBit; t++) {
                         if (((idx + 1) & (1 << t)) != 0) {
-                            encoded[iPkg * 127 + (1 << t) - 1] ^= encoded[iPkg * 127 + idx];
+                            encoded[iPkg * hammingAdu + (1 << t) - 1] ^= encoded[iPkg * hammingAdu + idx];
                         }
                     }
 
@@ -36,39 +40,40 @@ public class Hamming {
     }
 
     public static byte[] decodeHamming(boolean[] encoded) {
-        int numPackages = encoded.length / 127;
+        int numPackages = encoded.length / hammingAdu;
+        System.out.println(numPackages);
 
-        boolean[] bits = new boolean[numPackages * 120];
+        boolean[] bits = new boolean[numPackages * hammingOri];
 
         int rawIdx = 0;
-        boolean[] verifyBits = new boolean[7];
+        boolean[] verifyBits = new boolean[hammingBit];
 
         for (int iPkg = 0; iPkg < numPackages; iPkg++) {
             Arrays.fill(verifyBits, false);
 
-            for (int idx = 0; idx < 127; idx++) {
-                for (int t = 0; t < 7; t++) {
+            for (int idx = 0; idx < hammingAdu; idx++) {
+                for (int t = 0; t < hammingBit; t++) {
                     if (((idx + 1) & (1 << t)) != 0) {
-                        verifyBits[t] ^= encoded[iPkg * 127 + idx];
+                        verifyBits[t] ^= encoded[iPkg * hammingAdu + idx];
                     }
                 }
             }
 
             int errorIdx = 0;
 
-            for (int t = 0; t < 7; t++) {
+            for (int t = 0; t < hammingBit; t++) {
                 errorIdx += verifyBits[t] ? (1 << t) : 0;
             }
 
             if (errorIdx != 0) {
-//                System.err.println("[Warn] Detected Err Bit on " + errorIdx + "Bits:" + Arrays.toString(verifyBits));
-                encoded[iPkg * 127 + errorIdx - 1] ^= true;
+                System.err.println("[Warn] Detected Err Bit on " + errorIdx + "Bits:" + Arrays.toString(verifyBits));
+                encoded[iPkg * hammingAdu + errorIdx - 1] ^= true;
             }
 
-            for (int idx = 0; idx < 127; idx++) {
+            for (int idx = 0; idx < hammingAdu; idx++) {
                 if (((idx + 1) & idx) != 0) {
                     /* not verifying bit */
-                    bits[rawIdx] = encoded[iPkg * 127 + idx];
+                    bits[rawIdx] = encoded[iPkg * hammingAdu + idx];
                     rawIdx++;
                 }
             }

@@ -14,20 +14,20 @@ public class FEC {
     public static void main(String[] args) throws IOException, InterruptedException {
         Physicis physics;
         String GT_input;
-        int frameSize=30;
+        int frameSize=55;
 
-        physics = new Physicis(16, frameSize, "wire", true);
+        physics = new Physicis(8, frameSize, "mic", true);
 
 //        Path path = Paths.get("INPUT.txt");
 //        char[] input_data = Files.readString(path).toCharArray();
 //        GT_input = String.valueOf(input_data);
-        byte[] ori_data = new byte[frameSize * 4];
+        byte[] ori_data = new byte[frameSize * 23];
         Arrays.fill(ori_data, (byte) 0);
 //        for (int i = 0; i < input_data.length; i++) {
 //            ori_data[i/8] <<= 1;
 //            ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
 //        }
-//        RandomGenerator.getDefault().nextBytes(ori_data);
+        RandomGenerator.getDefault().nextBytes(ori_data);
         StringBuilder temp = new StringBuilder();
         for (byte b : ori_data) {
             for (int i = 0; i < 8; i++) {
@@ -37,6 +37,9 @@ public class FEC {
         }
         GT_input = temp.toString();
         int numFrames = (int) Math.ceil((double) ori_data.length / frameSize);
+
+        physics.start();
+
         for (int i = 0; i < numFrames - 1; i++) {
             byte[] frame = Arrays.copyOfRange(ori_data, i * frameSize, (i + 1) * frameSize);
             physics.write(frame);
@@ -52,7 +55,6 @@ public class FEC {
         }
         physics.write(frame);
 
-        physics.start();
         while (!physics.sendComplete()) {
             Thread.sleep(100);
         }
