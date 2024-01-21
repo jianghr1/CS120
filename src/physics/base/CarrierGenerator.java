@@ -103,4 +103,24 @@ public class CarrierGenerator {
         }
         return carriers;
     }
+
+    public float[] genPrembleArray(int prembleLength) {
+        float[] prembles = new float[prembleLength];
+        double startFreq = 2*1e3;
+        double endFreq = 10*1e3;
+        double accOmega = 0;
+        double sampleTime = 1/sampleRate;
+        int i = 0;
+        for (; i < prembleLength/2; i++) {
+            double freq = startFreq + i*(endFreq-startFreq)/((float) prembleLength /2);
+            prembles[i]= (float) Math.sin(accOmega * 2 * Math.PI);
+            accOmega += freq*sampleTime;
+        }
+        for (; i < prembleLength; i++) {
+            double freq = startFreq + (prembleLength - i - 1)*(endFreq-startFreq)/((float) prembleLength /2);
+            prembles[i]= (float) Math.sin(accOmega * 2 * Math.PI);
+            accOmega += freq*sampleTime;
+        }
+        return  prembles;
+    }
 }

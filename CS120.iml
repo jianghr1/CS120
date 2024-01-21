@@ -13,5 +13,6 @@
     <orderEntry type="library" name="ch.qos.logback.core" level="project" />
     <orderEntry type="library" name="ch.qos.logback.classic" level="project" />
     <orderEntry type="library" name="pcap4j.packetfactory.static" level="project" />
+    <orderEntry type="library" name="tuntap4j-1.0.0" level="project" />
   </component>
 </module>
