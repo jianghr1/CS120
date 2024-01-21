@@ -36,8 +36,8 @@ public class task1_gateway {
                 String domain = new String(data, StandardCharsets.US_ASCII);
 
                 StringBuilder nonZeroChars = new StringBuilder();
-                for (int i = 0; i < domain_.length(); i++) {
-                    char c = domain_.charAt(i);
+                for (int i = 0; i < domain.length(); i++) {
+                    char c = domain.charAt(i);
                     if (c == 0X00) {
                         break;
                     }
