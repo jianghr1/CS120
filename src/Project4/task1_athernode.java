@@ -1,0 +1,48 @@
+package Project4;
+
+import mac.Mac;
+import mac.MacFrame;
+import mac.MacFrameType;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
+public class task1_athernode {
+    public static void main(String[] args) throws IOException {
+        String query_site = "www.baidu.com";
+        Mac mac = new Mac(1);
+
+        try {
+            Thread.sleep(1000);
+            mac.start();
+            Thread.sleep(1000);
+            for (int i = 0; i < 10; i++) {
+                byte[] data = new byte[20];
+                byte[] query_site_binary = query_site.getBytes(StandardCharsets.US_ASCII);
+                System.arraycopy(query_site_binary, 0, data, 0, query_site_binary.length);
+                MacFrame frame = new MacFrame(0, 1, MacFrameType.DATA, MacFrame.FLAG_PLAIN, data);
+                long time = System.nanoTime();
+                mac.write(frame);
+                MacFrame replyFrame = mac.read(1000);
+                if (replyFrame == null)
+                {
+                    System.out.println("Lost");
+                } else {
+                    byte[] replyData = replyFrame.data;
+                    byte[] replyDstIP = Arrays.copyOf(replyData, 4);
+                    String domain = new String(data, StandardCharsets.US_ASCII);
+                    System.out.println("Destination ip " + domain);
+                    double ping = (System.nanoTime() - time) / 1000000.0;
+                    System.out.println("DNS query finished " + ping + "ms");
+                }
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
+            mac.stop();
+            throw new RuntimeException(e);
+        }
+        mac.stop();
+    }
+}
