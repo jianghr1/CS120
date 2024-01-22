@@ -31,7 +31,9 @@ public class Physicis implements Closeable {
         asioDriver.openControlPanel();
 
         int bufferSize = getBufferSize();
+        asioDriver.setSampleRate(48000);
         double sampleRate = getSampleRate();
+        System.out.println(sampleRate);
         Codec codec;
 
         // 2 bits For CRC16
@@ -39,6 +41,8 @@ public class Physicis implements Closeable {
 
         if (codecType.compareToIgnoreCase("wire") == 0) {
             codec = new WireCodec(sampleRate, bufferSize, bitWidth, frameSize);
+        } else if(codecType.compareToIgnoreCase("OFDM") == 0) {
+            codec = new MicOFDMCodec(sampleRate, bufferSize, bitWidth, frameSize);
         } else {
             codec = new MicCodec(sampleRate, bufferSize, bitWidth, frameSize);
         }

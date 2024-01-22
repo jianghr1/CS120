@@ -58,7 +58,6 @@ public class PhysicisReceiver implements Runnable {
         if (isHamming) {
             numSamples = bitWidth * (int) (Math.ceil(frameSize * 8 / Hamming.hammingOri) * Hamming.hammingAdu);
         }
-        System.out.println(numSamples);
         float[] decode = new float[numSamples];
         int currentDecodeIndex = 0;
         int totalCount = 0;

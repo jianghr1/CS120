@@ -2,6 +2,7 @@ package physics;
 
 import physics.base.Hamming;
 
+import physics.base.CarrierGenerator;
 public class Codec {
 
     protected static float[] carrier;
@@ -43,7 +44,7 @@ public class Codec {
         return wave;
     }
 
-    public static float[] modulateByte(byte[] frame, int bitWidth) {
+    public float[] modulateByte(byte[] frame, int bitWidth) {
 
         int waveLength = preamble.length + frame.length * 8 * bitWidth;
         float[] wave = new float[waveLength];
@@ -103,7 +104,7 @@ public class Codec {
     }
 
 
-    public static byte[] demodulateByte(float[] data, int bitWidth) {
+    public byte[] demodulateByte(float[] data, int bitWidth) {
         float[] corr = new float[data.length];
         for (int i = 0; i < data.length; i++) {
             corr[i] = data[i] * carrier[i];
