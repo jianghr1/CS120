@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.random.RandomGenerator;
 
 public class FEC {
@@ -18,6 +19,14 @@ public class FEC {
 
         physics = new Physicis(24
                 , frameSize, "ofdm", true);
+        System.out.println("Going to show Task2. Enter to start");
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+                break;
+            }
+        }
 
 //        Path path = Paths.get("INPUT.txt");
 //        char[] input_data = Files.readString(path).toCharArray();
@@ -28,7 +37,7 @@ public class FEC {
 //            ori_data[i/8] <<= 1;
 //            ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
 //        }
-        RandomGenerator.getDefault().nextBytes(ori_data);
+//        RandomGenerator.getDefault().nextBytes(ori_data);
         StringBuilder temp = new StringBuilder();
         for (byte b : ori_data) {
             for (int i = 0; i < 8; i++) {
