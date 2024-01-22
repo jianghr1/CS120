@@ -17,37 +17,22 @@ public class FEC {
         String GT_input;
         int frameSize=55;
 
-        physics = new Physicis(24
-                , frameSize, "ofdm", true);
-        System.out.println("Going to show Task2. Enter to start");
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            if (scanner.hasNextLine()) {
-                scanner.nextLine();
-                break;
-            }
-        }
+        physics = new Physicis(48, frameSize, "ofdm", true);
 
-//        Path path = Paths.get("INPUT.txt");
-//        char[] input_data = Files.readString(path).toCharArray();
-//        GT_input = String.valueOf(input_data);
-        byte[] ori_data = new byte[frameSize * 5];
+        Path path = Paths.get("INPUT.txt");
+        char[] input_data = Files.readString(path).toCharArray();
+        GT_input = String.valueOf(input_data);
+        byte[] ori_data = new byte[frameSize * 23];
         Arrays.fill(ori_data, (byte) 0);
-//        for (int i = 0; i < input_data.length; i++) {
-//            ori_data[i/8] <<= 1;
-//            ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
-//        }
-//        RandomGenerator.getDefault().nextBytes(ori_data);
-        StringBuilder temp = new StringBuilder();
-        for (byte b : ori_data) {
-            for (int i = 0; i < 8; i++) {
-                temp.append((b & 0xff) > 127 ? "1" : "0");
-                b <<= 1;
-            }
+        for (int i = 0; i < input_data.length; i++) {
+            ori_data[i/8] <<= 1;
+            ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
         }
-        GT_input = temp.toString();
         int numFrames = (int) Math.ceil((double) ori_data.length / frameSize);
-
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
         physics.start();
 
         for (int i = 0; i < numFrames - 1; i++) {
@@ -73,20 +58,23 @@ public class FEC {
         System.out.println("read start");
 
         StringBuilder output = new StringBuilder();
-        frame = physics.readNoWait();
+        frame = physics.read(5000);
+        int cnt = 0;
         while (frame != null) {
             for (byte b : frame) {
                 for (int i = 0; i < 8; i++) {
                     output.append((b & 0xff) > 127 ? "1" : "0");
                     b <<= 1;
+                    cnt++;
                 }
+                if(cnt == GT_input.length()) break;
             }
-            frame = physics.readNoWait();
+            frame = physics.read(1000);
         }
-        Path path = Paths.get("OUTPUT.txt");
+        path = Paths.get("OUTPUT.txt");
         Files.writeString(path, output.toString());
         physics.stop();
-        int cnt = 0;
+        cnt = 0;
         for (int i = 0; i < Math.min(GT_input.length(), output.length()); i++) {
             if (GT_input.charAt(i) == output.charAt(i)) {
                 cnt++;
