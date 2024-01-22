@@ -58,7 +58,7 @@ public class FEC {
         System.out.println("read start");
 
         StringBuilder output = new StringBuilder();
-        frame = physics.readNoWait();
+        frame = physics.read(5000);
         int cnt = 0;
         while (frame != null) {
             for (byte b : frame) {
@@ -69,7 +69,7 @@ public class FEC {
                 }
                 if(cnt == GT_input.length()) break;
             }
-            frame = physics.readNoWait();
+            frame = physics.read(1000);
         }
         path = Paths.get("OUTPUT.txt");
         Files.writeString(path, output.toString());
