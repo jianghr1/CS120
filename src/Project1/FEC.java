@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.random.RandomGenerator;
 
 public class FEC {
@@ -28,7 +29,10 @@ public class FEC {
             ori_data[i/8] |= (byte)((input_data[i] == '0') ? 0 : 1);
         }
         int numFrames = (int) Math.ceil((double) ori_data.length / frameSize);
-
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
         physics.start();
 
         for (int i = 0; i < numFrames - 1; i++) {
